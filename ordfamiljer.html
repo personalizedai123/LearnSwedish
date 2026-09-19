@@ -13,7 +13,7 @@
         h1 { margin: 10px 0; max-width: 650px; font-size: clamp(2.5rem, 7vw, 5rem); line-height: .95; font-weight: 500; letter-spacing: -.04em; }
         .intro { margin: 0 0 28px; color: var(--muted); font-size: 1.1rem; line-height: 1.5; }
         #quiz { padding: 24px; border: 1px solid var(--line); background: #fffdf7e6; box-shadow: 0 18px 45px #22362b1c; }
-        .question { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(135px, 180px) minmax(100px, .7fr) minmax(120px, .9fr) minmax(130px, .9fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+        .question { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(135px, 180px) minmax(100px, .7fr) minmax(180px, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
         .question:last-child { border-bottom: 0; }
         .noun { font-size: 1.05rem; font-weight: 500; }
         input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 16px Georgia, serif; }
@@ -24,7 +24,6 @@
         .correct { color: var(--green-dark); }
         .incorrect { color: var(--coral); }
         .meaning { color: var(--muted); font: 14px Arial, sans-serif; }
-        .vietnamese { color: var(--green-dark); font: 14px Arial, sans-serif; }
         .listen { margin: 0; padding: 9px 11px; border: 1px solid var(--green); background: transparent; color: var(--green-dark); cursor: pointer; font: 700 12px Arial, sans-serif; letter-spacing: .04em; }
         .listen:hover, .listen:focus-visible { background: var(--mint); outline: 3px solid #dceee488; }
         #summary { min-height: 22px; margin: 18px 0 0; font: 700 14px Arial, sans-serif; }
@@ -181,8 +180,7 @@
                 <span class="noun">${index + 1}. ${q.noun} &rarr;</span>
                 <input type="text" id="q${index}" placeholder="Skriv verb...">
                 <span id="res${index}" class="result"></span>
-                <span class="meaning">${q.meaning}</span>
-                <span class="vietnamese">${q.vietnamese}</span>
+                <span class="meaning">${q.meaning}/${q.vietnamese}</span>
                 <button class="listen" type="button" aria-label="Lyssna på ${q.verb}">Lyssna</button>
             `;
             quizDiv.appendChild(div);
