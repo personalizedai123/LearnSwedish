@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ordfamiljer: Hitta verbet</title>
+    <style>
+        :root { --ink: #17221d; --muted: #65736b; --paper: #f7f4ec; --card: #fffdf7; --line: #d9ded4; --green: #176b54; --green-dark: #0e4d3c; --mint: #dceee4; --coral: #c9634e; }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; color: var(--ink); background: radial-gradient(circle at 8% 8%, #f3c96940, transparent 24rem), radial-gradient(circle at 92% 82%, #dceee4b3, transparent 28rem), var(--paper); font-family: Georgia, 'Times New Roman', serif; }
+        main { width: min(900px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 60px; }
+        .eyebrow { color: var(--green); font: 700 12px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+        h1 { margin: 10px 0; max-width: 650px; font-size: clamp(2.5rem, 7vw, 5rem); line-height: .95; font-weight: 500; letter-spacing: -.04em; }
+        .intro { margin: 0 0 28px; color: var(--muted); font-size: 1.1rem; line-height: 1.5; }
+        #quiz { padding: 24px; border: 1px solid var(--line); background: #fffdf7e6; box-shadow: 0 18px 45px #22362b1c; }
+        .question { display: grid; grid-template-columns: minmax(170px, 1fr) minmax(145px, 180px) minmax(100px, .75fr) minmax(130px, 1fr); gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+        .question:last-child { border-bottom: 0; }
+        .noun { font-size: 1.05rem; font-weight: 500; }
+        input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 16px Georgia, serif; }
+        input:focus { outline: 3px solid #dceee4; border-color: var(--green); }
+        button { margin-top: 22px; padding: 13px 20px; border: 0; background: var(--green); color: white; cursor: pointer; font: 700 13px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+        button:hover { background: var(--green-dark); }
+        .result { font: 700 13px Arial, sans-serif; }
+        .correct { color: var(--green-dark); }
+        .incorrect { color: var(--coral); }
+        .meaning { color: var(--muted); font: 14px Arial, sans-serif; }
+        #summary { min-height: 22px; margin: 18px 0 0; font: 700 14px Arial, sans-serif; }
+        @media (max-width: 640px) { main { padding-top: 25px; } .question { grid-template-columns: 1fr; gap: 7px; padding: 15px 0; } .result { min-height: 18px; } }
+    </style>
+</head>
+<body>
+<main>
+    <div class="eyebrow">Svenska · ordfamiljer</div>
+    <h1>Hitta verbet</h1>
+    <p class="intro">Skriv in rätt verb i grundform (infinitiv) till varje substantiv. Det finns 50 ord att träna på.</p>
+
+    <div id="quiz"></div>
+    <p id="summary" aria-live="polite"></p>
+</main>
+
+    <script>
+        const words = [
+            // Orden från dina bilder (15 st)
+            { noun: "ett stöd", verb: "stödja" },
+            { noun: "en händelse", verb: "hända" },
+            { noun: "en flykt", verb: "fly" },
+            { noun: "ett arv", verb: "ärva" },
+            { noun: "en upptäckt", verb: "upptäcka" },
+            { noun: "en uppfinning", verb: "uppfinna" },
+            { noun: "en undervisning", verb: "undervisa" },
+            { noun: "en strålning", verb: "stråla" },
+            { noun: "en gåva", verb: "ge" },
+            { noun: "ett hopp", verb: "hoppa" },
+            { noun: "ett skäll", verb: "skälla" },
+            { noun: "en omgivning", verb: "omge" },
+            { noun: "en utdelning", verb: "dela ut" },
+            { noun: "ett erbjudande", verb: "erbjuda" },
+            { noun: "en kombination", verb: "kombinera" },
+            
+            // Ytterligare 35 vanliga ordfamiljer
+            { noun: "en beskrivning", verb: "beskriva" },
+            { noun: "en förklaring", verb: "förklara" },
+            { noun: "ett beslut", verb: "besluta" },
+            { noun: "en lösning", verb: "lösa" },
+            { noun: "en betalning", verb: "betala" },
+            { noun: "en jämförelse", verb: "jämföra" },
+            { noun: "en undersökning", verb: "undersöka" },
+            { noun: "en utveckling", verb: "utveckla" },
+            { noun: "en förändring", verb: "förändra" },
+            { noun: "en användning", verb: "använda" },
+            { noun: "en känsla", verb: "känna" },
+            { noun: "en tanke", verb: "tänka" },
+            { noun: "en kunskap", verb: "kunna" },
+            { noun: "en start", verb: "starta" },
+            { noun: "en stängning", verb: "stänga" },
+            { noun: "en öppning", verb: "öppna" },
+            { noun: "en försäljning", verb: "sälja" },
+            { noun: "ett köp", verb: "köpa" },
+            { noun: "en resa", verb: "resa" },
+            { noun: "ett arbete", verb: "arbeta" },
+            { noun: "en läsning", verb: "läsa" },
+            { noun: "en skrivning", verb: "skriva" },
+            { noun: "en körning", verb: "köra" },
+            { noun: "en lyssning", verb: "lyssna" },
+            { noun: "en talan", verb: "tala" },
+            { noun: "en fråga", verb: "fråga" },
+            { noun: "ett svar", verb: "svara" },
+            { noun: "en ritning", verb: "rita" },
+            { noun: "en byggnad", verb: "bygga" },
+            { noun: "en plan", verb: "planera" },
+            { noun: "en räkning", verb: "räkna" },
+            { noun: "en samling", verb: "samla" },
+            { noun: "en delning", verb: "dela" },
+            { noun: "en träning", verb: "träna" },
+            { noun: "en tävling", verb: "tävla" }
+        ];
+
+        const meanings = {
+            "ett stöd": "support",
+            "en händelse": "event",
+            "en flykt": "escape / flight",
+            "ett arv": "inheritance",
+            "en upptäckt": "discovery",
+            "en uppfinning": "invention",
+            "en undervisning": "teaching",
+            "en strålning": "radiation",
+            "en gåva": "gift",
+            "ett hopp": "jump / hope",
+            "ett skäll": "scolding",
+            "en omgivning": "surroundings",
+            "en utdelning": "distribution",
+            "ett erbjudande": "offer",
+            "en kombination": "combination",
+            "en beskrivning": "description",
+            "en förklaring": "explanation",
+            "ett beslut": "decision",
+            "en lösning": "solution",
+            "en betalning": "payment",
+            "en jämförelse": "comparison",
+            "en undersökning": "investigation / survey",
+            "en utveckling": "development",
+            "en förändring": "change",
+            "en användning": "use",
+            "en känsla": "feeling",
+            "en tanke": "thought",
+            "en kunskap": "knowledge",
+            "en start": "start",
+            "en stängning": "closing",
+            "en öppning": "opening",
+            "en försäljning": "sale",
+            "ett köp": "purchase",
+            "en resa": "journey / trip",
+            "ett arbete": "work",
+            "en läsning": "reading",
+            "en skrivning": "writing",
+            "en körning": "driving",
+            "en lyssning": "listening",
+            "en talan": "speech / action",
+            "en fråga": "question",
+            "ett svar": "answer",
+            "en ritning": "drawing / blueprint",
+            "en byggnad": "building",
+            "en plan": "plan",
+            "en räkning": "calculation / bill",
+            "en samling": "collection",
+            "en delning": "sharing / division",
+            "en träning": "training",
+            "en tävling": "competition"
+        };
+        words.forEach(q => q.meaning = meanings[q.noun]);
+
+        const quizDiv = document.getElementById('quiz');
+        
+        words.forEach((q, index) => {
+            const div = document.createElement('div');
+            div.className = 'question';
+            div.innerHTML = `
+                <span class="noun">${index + 1}. ${q.noun} &rarr;</span>
+                <input type="text" id="q${index}" placeholder="Skriv verb...">
+                <span id="res${index}" class="result"></span>
+                <span class="meaning">${q.meaning}</span>
+            `;
+            quizDiv.appendChild(div);
+            document.getElementById(`q${index}`).addEventListener('change', () => checkAnswer(q, index));
+        });
+
+        function checkAnswer(q, index) {
+            const input = document.getElementById(`q${index}`);
+            const resultSpan = document.getElementById(`res${index}`);
+            const userAnswer = input.value.trim().toLowerCase();
+            if (!userAnswer) {
+                resultSpan.textContent = '';
+                resultSpan.className = 'result';
+                updateSummary();
+                return false;
+            }
+
+            const acceptedAnswers = [q.verb];
+            if (q.verb === "stödja") acceptedAnswers.push("stöda");
+            if (q.verb === "dela ut") acceptedAnswers.push("utdela");
+            if (q.verb === "besluta") acceptedAnswers.push("bestämma");
+            if (q.verb === "arbeta") acceptedAnswers.push("jobba");
+
+            if (acceptedAnswers.includes(userAnswer)) {
+                resultSpan.textContent = "✓ Rätt!";
+                resultSpan.className = "result correct";
+                updateSummary();
+                return true;
+            }
+
+            resultSpan.textContent = "✗ Fel (Rätt: " + q.verb + ")";
+            resultSpan.className = "result incorrect";
+            updateSummary();
+            return false;
+        }
+
+        function updateSummary() {
+            let answeredCount = 0;
+            let correctCount = 0;
+            words.forEach((q, index) => {
+                const answer = document.getElementById(`q${index}`).value.trim().toLowerCase();
+                if (!answer) return;
+                answeredCount++;
+                const acceptedAnswers = [q.verb];
+                if (q.verb === "stödja") acceptedAnswers.push("stöda");
+                if (q.verb === "dela ut") acceptedAnswers.push("utdela");
+                if (q.verb === "besluta") acceptedAnswers.push("bestämma");
+                if (q.verb === "arbeta") acceptedAnswers.push("jobba");
+                if (acceptedAnswers.includes(answer)) correctCount++;
+            });
+            document.getElementById('summary').textContent = answeredCount
+                ? `Rätt hittills: ${correctCount} av ${answeredCount} besvarade.`
+                : '';
+        }
+
+        function checkAnswers() {
+            words.forEach((q, index) => checkAnswer(q, index));
+            const correctCount = words.filter((q, index) => checkAnswer(q, index)).length;
+            document.getElementById('summary').textContent = `Resultat: ${correctCount} av ${words.length} rätt.`;
+        }
+    </script>
+</body>
+</html>
