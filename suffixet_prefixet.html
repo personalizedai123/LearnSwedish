@@ -124,6 +124,22 @@
             "make more expensive", "refine", "blind", "make wild", "darken",
             "harden", "falsify", "double", "make obsolete", "distort"
         ];
+        const vietnameseMeanings1 = [
+            "dễ lây", "tiết kiệm", "do dự", "chăm chỉ", "hay giúp đỡ",
+            "hay trêu chọc", "nhút nhát / khiêm tốn", "bạo lực", "lành mạnh", "có lợi nhuận",
+            "yên bình", "hài hước", "cẩn thận / chú ý", "chu đáo", "xấu hổ / khó xử",
+            "có lợi", "nói nhiều", "hòa bình", "vất vả", "đang hoạt động",
+            "chậm", "ngoan / biết nghe lời", "kính trọng", "dám mạo hiểm", "hiếm / kỳ lạ"
+        ];
+        const vietnameseMeanings2 = [
+            "cải thiện", "làm to hơn", "làm nhỏ lại", "Thụy Điển hóa", "đơn giản hóa",
+            "làm khó", "làm sâu hơn", "làm đẹp", "mạ vàng", "rút ngắn",
+            "kéo dài", "làm mạnh hơn", "làm yếu đi", "làm mới", "làm rõ",
+            "làm đắt hơn", "tinh chế", "làm mù", "làm hoang dã", "làm tối",
+            "làm cứng", "làm giả", "gấp đôi", "làm lỗi thời", "làm sai lệch"
+        ];
+        section1.forEach((q, index) => q.vietnamese = vietnameseMeanings1[index]);
+        section2.forEach((q, index) => q.vietnamese = vietnameseMeanings2[index]);
         section1.forEach((q, index) => q.meaning = meanings1[index]);
         section2.forEach((q, index) => q.meaning = meanings2[index]);
 
@@ -136,7 +152,7 @@
                 <span class="label">${index + 1}. ${q.prompt} &rarr;</span>
                 <input type="text" id="s1_q${index}" placeholder="Skriv adjektiv...">
                 <span id="s1_res${index}" class="result"></span>
-                <span class="meaning">${q.meaning}</span>
+                <span class="meaning">${q.meaning} (${q.vietnamese})</span>
                 <button class="listen" type="button" aria-label="Lyssna på ${q.answer}">Lyssna</button>
             `;
             quiz1Div.appendChild(div);
@@ -153,7 +169,7 @@
                 <span class="label">${index + 26}. ${q.prompt} &rarr;</span>
                 <input type="text" id="s2_q${index}" placeholder="Skriv verb...">
                 <span id="s2_res${index}" class="result"></span>
-                <span class="meaning">${q.meaning}</span>
+                <span class="meaning">${q.meaning} (${q.vietnamese})</span>
                 <button class="listen" type="button" aria-label="Lyssna på ${q.answer}">Lyssna</button>
             `;
             quiz2Div.appendChild(div);
