@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ordbildning: -sam och för-</title>
+    <style>
+        :root { --ink: #17221d; --muted: #65736b; --paper: #f7f4ec; --card: #fffdf7; --line: #d9ded4; --green: #176b54; --green-dark: #0e4d3c; --mint: #dceee4; --coral: #c9634e; --yellow: #f3c969; }
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; color: var(--ink); background: radial-gradient(circle at 8% 8%, #f3c96940, transparent 24rem), radial-gradient(circle at 92% 82%, #dceee4b3, transparent 28rem), var(--paper); font-family: Georgia, 'Times New Roman', serif; }
+        main { width: min(920px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 60px; }
+        .eyebrow { color: var(--green); font: 700 12px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+        h1 { margin: 10px 0; font-size: clamp(2.5rem, 7vw, 5rem); line-height: .95; font-weight: 500; letter-spacing: -.04em; }
+        .intro { margin: 0 0 28px; color: var(--muted); font-size: 1.1rem; line-height: 1.5; }
+        h2 { margin: 34px 0 8px; color: var(--green-dark); font-size: 1.65rem; font-weight: 500; }
+        h3 { margin: 0 0 18px; color: var(--muted); font: 13px/1.5 Arial, sans-serif; font-weight: 400; }
+        .quiz { padding: 24px; border: 1px solid var(--line); background: #fffdf7e6; box-shadow: 0 18px 45px #22362b1c; }
+        .question { display: grid; grid-template-columns: minmax(250px, 1fr) minmax(145px, 190px) minmax(110px, 1fr); gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+        .question:last-child { border-bottom: 0; }
+        .label { font-size: 1.05rem; font-weight: 500; }
+        input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 16px Georgia, serif; }
+        input:focus { outline: 3px solid var(--mint); border-color: var(--green); }
+        .result { font: 700 13px Arial, sans-serif; }
+        .correct { color: var(--green-dark); }
+        .incorrect { color: var(--coral); }
+        #summary { margin: 24px 0 0; padding: 16px 20px; border-left: 4px solid var(--yellow); background: #fffdf7b3; font: 700 14px Arial, sans-serif; }
+        @media (max-width: 640px) { main { padding-top: 25px; } .quiz { padding: 18px; } .question { grid-template-columns: 1fr; gap: 7px; padding: 15px 0; } .result { min-height: 18px; } }
+    </style>
+</head>
+<body>
+<main>
+    <div class="eyebrow">Svenska · ordbildning</div>
+    <h1>Bygg nya ord</h1>
+    <p class="intro">Använd suffixet <strong>-sam</strong> eller prefixet <strong>för-</strong> för att bilda rätt ord.</p>
+    
+    <h2>Del A · Adjektiv på -sam</h2>
+    <h3>Bild­a ett adjektiv som beskriver uttrycket.</h3>
+    <div class="quiz" id="quiz1"></div>
+
+    <h2>Del B · Verb med för-</h2>
+    <h3>Bild­a ett verb som betyder att göra något på det sättet.</h3>
+    <div class="quiz" id="quiz2"></div>
+    <p id="summary" aria-live="polite"></p>
+</main>
+
+    <script>
+        // Del A: 25 ord med -sam
+        const section1 = [
+            // Från bild 3
+            { prompt: "som brukar smitta", answer: "smittosam" },
+            { prompt: "som brukar spara", answer: "sparsam" },
+            { prompt: "som brukar tveka", answer: "tveksam" },
+            { prompt: "som brukar arbeta", answer: "arbetsam" },
+            { prompt: "som brukar hjälpa", answer: "hjälpsam" },
+            { prompt: "som brukar reta", answer: "retsam" },
+            { prompt: "som brukar vara blyg", answer: "blygsam" },
+            { prompt: "som brukar använda våld", answer: "våldsam" },
+            // Ytterligare -sam ord
+            { prompt: "som ger god hälsa", answer: "hälsosam" },
+            { prompt: "som ger bra vinst/lön", answer: "lönsam" },
+            { prompt: "som är lugn och stilla", answer: "stillsam" },
+            { prompt: "som tycker om att skämta", answer: "skämtsam" },
+            { prompt: "som är försiktig och uppmärksam", answer: "aktsam" },
+            { prompt: "som är varsam och hänsynsfull", answer: "varsam" },
+            { prompt: "som är besvärlig/pinsam", answer: "pinsam" },
+            { prompt: "som ger goda resultat/nytta", answer: "gynnsam" },
+            { prompt: "som tycker om att prata", answer: "pratsam" },
+            { prompt: "som är fredlig", answer: "fredsam" },
+            { prompt: "som kräver mycket möda", answer: "mödosam" },
+            { prompt: "som är aktiv/i gång", answer: "verksam" },
+            { prompt: "som tar lång tid / inte har bråttom", answer: "långsam" },
+            { prompt: "som lyssnar och lyder", answer: "hörsam" },
+            { prompt: "som visar stor respekt", answer: "vördsam" },
+            { prompt: "som vågar ta risker", answer: "vågsam" },
+            { prompt: "som är sällsynt eller märklig", answer: "sällsam" }
+        ];
+
+        // Del B: 25 ord med för-
+        const section2 = [
+            // Från bild 4
+            { prompt: "göra bättre", answer: "förbättra" },
+            { prompt: "göra stor", answer: "förstora" },
+            { prompt: "göra mindre", answer: "förminska" },
+            { prompt: "göra svensk", answer: "försvenska" },
+            { prompt: "göra enkel", answer: "förenkla" },
+            // Ytterligare för- verb
+            { prompt: "göra svår", answer: "försvåra" },
+            { prompt: "göra djup", answer: "fördjupa" },
+            { prompt: "göra skön / vacker", answer: "försköna" },
+            { prompt: "göra gyllene / sätta guld på", answer: "förgylla" },
+            { prompt: "göra kort", answer: "förkorta" },
+            { prompt: "göra lång", answer: "förlänga" },
+            { prompt: "göra stark", answer: "förstärka" },
+            { prompt: "göra svag", answer: "försvaga" },
+            { prompt: "göra ny", answer: "förnya" },
+            { prompt: "göra tydlig", answer: "förtydliga" },
+            { prompt: "göra dyr", answer: "fördyra" },
+            { prompt: "göra fin", answer: "förfina" },
+            { prompt: "göra blind", answer: "förblinda" },
+            { prompt: "göra vild", answer: "förvilda" },
+            { prompt: "göra mörk", answer: "förmörka" },
+            { prompt: "göra hård", answer: "förhårda" },
+            { prompt: "göra falsk", answer: "förfalska" },
+            { prompt: "göra dubbel", answer: "fördubbla" },
+            { prompt: "göra äldre", answer: "föråldra" },
+            { prompt: "göra felaktig / förändra till det sämre", answer: "förvanska" }
+        ];
+
+        // Rendera del A
+        const quiz1Div = document.getElementById('quiz1');
+        section1.forEach((q, index) => {
+            const div = document.createElement('div');
+            div.className = 'question';
+            div.innerHTML = `
+                <span class="label">${index + 1}. ${q.prompt} &rarr;</span>
+                <input type="text" id="s1_q${index}" placeholder="Skriv adjektiv...">
+                <span id="s1_res${index}" class="result"></span>
+            `;
+            quiz1Div.appendChild(div);
+            document.getElementById(`s1_q${index}`).addEventListener('change', () => checkAnswer(q, index, 's1'));
+        });
+
+        // Rendera del B
+        const quiz2Div = document.getElementById('quiz2');
+        section2.forEach((q, index) => {
+            const div = document.createElement('div');
+            div.className = 'question';
+            div.innerHTML = `
+                <span class="label">${index + 26}. ${q.prompt} &rarr;</span>
+                <input type="text" id="s2_q${index}" placeholder="Skriv verb...">
+                <span id="s2_res${index}" class="result"></span>
+            `;
+            quiz2Div.appendChild(div);
+            document.getElementById(`s2_q${index}`).addEventListener('change', () => checkAnswer(q, index, 's2'));
+        });
+
+        function checkAnswer(q, index, section) {
+            const input = document.getElementById(`${section}_q${index}`);
+            const resSpan = document.getElementById(`${section}_res${index}`);
+            const userAns = input.value.trim().toLowerCase();
+            if (!userAns) {
+                resSpan.textContent = '';
+                resSpan.className = 'result';
+                updateSummary();
+                return false;
+            }
+            if (userAns === q.answer) {
+                resSpan.textContent = '✓ Rätt!';
+                resSpan.className = 'result correct';
+                updateSummary();
+                return true;
+            }
+            resSpan.textContent = `✗ Fel (Rätt: ${q.answer})`;
+            resSpan.className = 'result incorrect';
+            updateSummary();
+            return false;
+        }
+
+        function updateSummary() {
+            const allQuestions = [...section1.map((q, index) => [q, index, 's1']), ...section2.map((q, index) => [q, index, 's2'])];
+            let answered = 0;
+            let correct = 0;
+            allQuestions.forEach(([q, index, section]) => {
+                const answer = document.getElementById(`${section}_q${index}`).value.trim().toLowerCase();
+                if (!answer) return;
+                answered++;
+                if (answer === q.answer) correct++;
+            });
+            document.getElementById('summary').textContent = answered
+                ? `Rätt hittills: ${correct} av ${answered} besvarade.`
+                : '';
+        }
+    </script>
+</body>
+</html>
