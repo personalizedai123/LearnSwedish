@@ -181,6 +181,14 @@
             background-color: #dbeafe;
         }
 
+        .translation {
+            display: block;
+            margin-top: 4px;
+            color: #64748b;
+            font-size: 0.85rem;
+            font-weight: 400;
+        }
+
         .btn-submit {
             background-color: var(--accent-color);
             color: white;
@@ -414,6 +422,44 @@
         });
     }
 
+    const translations = {
+        ung: ['young', 'trẻ'],
+        gammal: ['old', 'già'],
+        stor: ['big', 'lớn'],
+        bra: ['good', 'tốt'],
+        dålig: ['bad', 'tệ'],
+        tung: ['heavy', 'nặng'],
+        intresserad: ['interested', 'quan tâm'],
+        typisk: ['typical', 'điển hình'],
+        liten: ['small', 'nhỏ'],
+        hög: ['high', 'cao'],
+        fantastisk: ['fantastic', 'tuyệt vời'],
+        smal: ['narrow', 'hẹp'],
+        känd: ['famous', 'nổi tiếng'],
+        lyxig: ['luxurious', 'sang trọng'],
+        snabb: ['fast', 'nhanh'],
+        många: ['many', 'nhiều'],
+        övertygad: ['convinced', 'tin chắc'],
+        god: ['tasty / good', 'ngon / tốt'],
+        vacker: ['beautiful', 'đẹp'],
+        lång: ['long', 'dài'],
+        enkel: ['easy / simple', 'dễ / đơn giản'],
+        få: ['few', 'ít'],
+        lysande: ['brilliant', 'rực rỡ']
+    };
+
+    function addTranslations() {
+        document.querySelectorAll('.table-quiz strong, .word-hint').forEach(element => {
+            const word = element.textContent.replace(/^\d+\.\s*/, '').trim();
+            const translation = translations[word];
+            if (!translation) return;
+            const label = document.createElement('span');
+            label.className = 'translation';
+            label.textContent = `${translation[0]} (${translation[1]})`;
+            element.insertAdjacentElement('afterend', label);
+        });
+    }
+
     function addListenButtons() {
         document.querySelectorAll('.table-quiz strong').forEach(label => {
             const word = label.textContent.replace(/^\d+\.\s*/, '').trim();
@@ -444,6 +490,7 @@
         });
     }
 
+    addTranslations();
     addListenButtons();
     const quizInputs = document.querySelectorAll('input[type="text"]');
 
