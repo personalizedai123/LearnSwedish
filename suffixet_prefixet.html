@@ -43,6 +43,7 @@
     <h2>Del B · Verb med för-</h2>
     <h3>Bild­a ett verb som betyder att göra något på det sättet.</h3>
     <div class="quiz" id="quiz2"></div>
+    <button type="button" onclick="clearAnswers()">Rensa</button>
     <p id="summary" aria-live="polite"></p>
 </main>
 
@@ -167,6 +168,15 @@
             utterance.lang = 'sv-SE';
             utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
+        }
+
+        function clearAnswers() {
+            document.querySelectorAll('input').forEach(input => { input.value = ''; });
+            document.querySelectorAll('.result').forEach(result => {
+                result.textContent = '';
+                result.className = 'result';
+            });
+            document.getElementById('summary').textContent = '';
         }
 
         function checkAnswer(q, index, section) {

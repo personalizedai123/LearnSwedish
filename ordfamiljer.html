@@ -37,6 +37,7 @@
     <p class="intro">Skriv in rätt verb i grundform (infinitiv) till varje substantiv. Det finns 50 ord att träna på.</p>
 
     <div id="quiz"></div>
+    <button type="button" onclick="clearAnswers()">Rensa</button>
     <p id="summary" aria-live="polite"></p>
 </main>
 
@@ -195,6 +196,15 @@
             utterance.lang = 'sv-SE';
             utterance.rate = 0.85;
             window.speechSynthesis.speak(utterance);
+        }
+
+        function clearAnswers() {
+            words.forEach((q, index) => {
+                document.getElementById(`q${index}`).value = '';
+                document.getElementById(`res${index}`).textContent = '';
+                document.getElementById(`res${index}`).className = 'result';
+            });
+            document.getElementById('summary').textContent = '';
         }
 
         function checkAnswer(q, index) {
