@@ -387,36 +387,37 @@
 </div>
 
 <script>
+    const quizInputs = document.querySelectorAll('input[type="text"]');
+
+    quizInputs.forEach(input => {
+        let feedback = input.closest('.question-card')?.querySelector('.feedback');
+        if (!feedback) {
+            feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            input.insertAdjacentElement('afterend', feedback);
+        }
+        input.addEventListener('change', () => checkSingleAnswer(input, feedback));
+    });
+
+    function checkSingleAnswer(input, feedback) {
+        const userAnswer = input.value.trim().toLowerCase().replace(/\s+/g, ' ');
+        const correctAnswers = input.getAttribute('data-answer').toLowerCase().split('|');
+        const isCorrect = userAnswer !== '' && correctAnswers.some(answer => answer.trim() === userAnswer);
+
+        input.classList.toggle('correct', isCorrect);
+        input.classList.toggle('incorrect', userAnswer !== '' && !isCorrect);
+        feedback.className = userAnswer ? `feedback ${isCorrect ? 'correct-text' : 'incorrect-text'}` : 'feedback';
+        feedback.textContent = userAnswer ? (isCorrect ? 'Rätt!' : `Rätt svar: ${correctAnswers.join(' / ')}`) : '';
+        return isCorrect;
+    }
+
     function checkAnswers() {
-        const inputs = document.querySelectorAll('input[type="text"]');
         let correctCount = 0;
-        let totalCount = inputs.length;
+        const totalCount = quizInputs.length;
 
-        inputs.forEach(input => {
-            const rawUserAnswer = input.value.trim().toLowerCase().replace(/\s+/g, ' ');
-            const correctAnswers = input.getAttribute('data-answer').toLowerCase().split('|');
-
-            const isCorrect = correctAnswers.some(ans => ans.trim() === rawUserAnswer);
-
-            const parentCard = input.closest('.question-card');
-            let feedbackEl = parentCard ? parentCard.querySelector('.feedback') : null;
-
-            if (isCorrect && rawUserAnswer !== "") {
-                input.classList.remove('incorrect');
-                input.classList.add('correct');
-                correctCount++;
-                if (feedbackEl) {
-                    feedbackEl.className = 'feedback correct-text';
-                    feedbackEl.textContent = 'Rätt!';
-                }
-            } else {
-                input.classList.remove('correct');
-                input.classList.add('incorrect');
-                if (feedbackEl) {
-                    feedbackEl.className = 'feedback incorrect-text';
-                    feedbackEl.textContent = `Rätt svar: ${correctAnswers.join(' / ')}`;
-                }
-            }
+        quizInputs.forEach(input => {
+            const feedback = input.closest('.question-card')?.querySelector('.feedback') || input.nextElementSibling;
+            if (checkSingleAnswer(input, feedback)) correctCount++;
         });
 
         const percentage = Math.round((correctCount / totalCount) * 100);
