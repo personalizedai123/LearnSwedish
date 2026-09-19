@@ -15,7 +15,7 @@
         h2 { margin: 34px 0 8px; color: var(--green-dark); font-size: 1.65rem; font-weight: 500; }
         h3 { margin: 0 0 18px; color: var(--muted); font: 13px/1.5 Arial, sans-serif; font-weight: 400; }
         .quiz { padding: 24px; border: 1px solid var(--line); background: #fffdf7e6; box-shadow: 0 18px 45px #22362b1c; }
-        .question { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(145px, 180px) minmax(100px, .8fr) minmax(130px, 1fr); gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+        .question { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(145px, 180px) minmax(100px, .8fr) minmax(130px, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
         .question:last-child { border-bottom: 0; }
         .label { font-size: 1.05rem; font-weight: 500; }
         input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: 16px Georgia, serif; }
@@ -24,6 +24,8 @@
         .correct { color: var(--green-dark); }
         .incorrect { color: var(--coral); }
         .meaning { color: var(--muted); font: 14px Arial, sans-serif; }
+            .listen { margin: 0; padding: 9px 11px; border: 1px solid var(--green); background: transparent; color: var(--green-dark); cursor: pointer; font: 700 12px Arial, sans-serif; letter-spacing: .04em; }
+            .listen:hover, .listen:focus-visible { background: var(--mint); outline: 3px solid #dceee488; }
         #summary { margin: 24px 0 0; padding: 16px 20px; border-left: 4px solid var(--yellow); background: #fffdf7b3; font: 700 14px Arial, sans-serif; }
         @media (max-width: 640px) { main { padding-top: 25px; } .quiz { padding: 18px; } .question { grid-template-columns: 1fr; gap: 7px; padding: 15px 0; } .result { min-height: 18px; } }
     </style>
@@ -134,9 +136,11 @@
                 <input type="text" id="s1_q${index}" placeholder="Skriv adjektiv...">
                 <span id="s1_res${index}" class="result"></span>
                 <span class="meaning">${q.meaning}</span>
+                <button class="listen" type="button" aria-label="Lyssna på ${q.answer}">Lyssna</button>
             `;
             quiz1Div.appendChild(div);
             document.getElementById(`s1_q${index}`).addEventListener('change', () => checkAnswer(q, index, 's1'));
+            div.querySelector('.listen').addEventListener('click', () => speak(q.answer));
         });
 
         // Rendera del B
@@ -149,10 +153,21 @@
                 <input type="text" id="s2_q${index}" placeholder="Skriv verb...">
                 <span id="s2_res${index}" class="result"></span>
                 <span class="meaning">${q.meaning}</span>
+                <button class="listen" type="button" aria-label="Lyssna på ${q.answer}">Lyssna</button>
             `;
             quiz2Div.appendChild(div);
             document.getElementById(`s2_q${index}`).addEventListener('change', () => checkAnswer(q, index, 's2'));
+            div.querySelector('.listen').addEventListener('click', () => speak(q.answer));
         });
+
+        function speak(word) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'sv-SE';
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        }
 
         function checkAnswer(q, index, section) {
             const input = document.getElementById(`${section}_q${index}`);
