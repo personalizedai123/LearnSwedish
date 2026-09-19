@@ -400,23 +400,35 @@
 
 <script>
     function speak(word) {
+        speakWords([word]);
+    }
+
+    function speakWords(words) {
         if (!('speechSynthesis' in window)) return;
         window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(word);
-        utterance.lang = 'sv-SE';
-        utterance.rate = 0.85;
-        window.speechSynthesis.speak(utterance);
+        words.forEach(word => {
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'sv-SE';
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        });
     }
 
     function addListenButtons() {
         document.querySelectorAll('.table-quiz strong').forEach(label => {
             const word = label.textContent.replace(/^\d+\.\s*/, '').trim();
+            const row = label.closest('tr');
+            const forms = [
+                word,
+                row.querySelector('input[placeholder="Komparativ"]').getAttribute('data-answer').split('|')[0],
+                row.querySelector('input[placeholder="Superlativ"]').getAttribute('data-answer').split('|')[0]
+            ];
             const button = document.createElement('button');
             button.type = 'button';
             button.className = 'listen';
             button.textContent = 'Lyssna';
-            button.setAttribute('aria-label', `Lyssna på ${word}`);
-            button.addEventListener('click', () => speak(word));
+            button.setAttribute('aria-label', `Lyssna på ${forms.join(', ')}`);
+            button.addEventListener('click', () => speakWords(forms));
             label.parentElement.appendChild(button);
         });
 
