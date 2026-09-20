@@ -222,6 +222,59 @@
   </main>
 
   <script>
+    const wordMeanings = {
+      'alltså': 'därför / så',
+      'fortfarande': 'fortfarande / ännu',
+      'nämligen': 'nämligen / det vill säga',
+      'tyvärr': 'tyvärr / olyckligtvis',
+      'knappt': 'knappt / nästan inte',
+      'Naturligtvis': 'naturligtvis / självklart',
+      'Nu för tiden': 'nu för tiden / numera',
+      'verkligen': 'verkligen / verkligen',
+      'förmodligen': 'förmodligen / antagligen',
+      'Oftast': 'oftast / vanligtvis',
+      'Säkert': 'säkert / visst',
+      'alltså': 'alltså / därför',
+      'inte': 'inte / ej',
+      'ibland': 'ibland / ibland',
+      'Någon gång': 'någon gång / ibland',
+      'Något': 'något / något',
+      'Först': 'först / först',
+      'säkert': 'säkert / visst'
+    };
+
+    const englishWordMeanings = {
+      'alltså': 'therefore / so',
+      'fortfarande': 'still',
+      'nämligen': 'namely / in fact',
+      'tyvärr': 'unfortunately',
+      'knappt': 'barely / hardly',
+      'Naturligtvis': 'of course',
+      'naturligtvis': 'of course',
+      'Nu för tiden': 'nowadays',
+      'verkligen': 'really',
+      'förmodligen': 'probably',
+      'Oftast': 'usually / most often',
+      'oftast': 'usually / most often',
+      'Säkert': 'certainly / surely',
+      'säkert': 'certainly / surely',
+      'inte': 'not',
+      'ibland': 'sometimes',
+      'Någon gång': 'sometime / ever',
+      'Något': 'something / anything',
+      'Först': 'first',
+      'ju': 'as you know / indeed',
+      'nu': 'now',
+      'Någon': 'someone / any',
+      'Knappt': 'barely / hardly',
+      'Alltså': 'therefore / so',
+      'Verkligen': 'really',
+      'Förmodligen': 'probably',
+      'Tyvärr': 'unfortunately',
+      'Nämnligen': 'namely / in fact',
+      'Telefonsamtal': 'telephone call'
+    };
+
     const questions = [
       {
         question: 'Jag ville gå ut, ___ det regnade.',
@@ -419,14 +472,19 @@
       if (selectedValue === item.answer) {
         statusEl.textContent = 'RÄTT';
         statusEl.className = 'status correct';
+        answerRevealEl.classList.add('visible');
+        const fullSentence = item.question.replace('___', item.answer);
+        answerRevealEl.innerHTML = `<span style="color: var(--green);">Korrekt svar: ${item.answer}</span><br><span style="font-weight: 400; color: var(--muted);">English: ${translateSentence(fullSentence)}</span>`;
       } else {
-        statusEl.textContent = 'FEL';
-        statusEl.className = 'status incorrect';
+        statusEl.textContent = '';
+        statusEl.className = 'status';
+        const selectedMeaning = wordMeanings[selectedValue] || 'okänd betydelse';
+        const selectedEnglishMeaning = englishWordMeanings[selectedValue] || 'meaning not available';
+        answerRevealEl.classList.add('visible');
+        const fullSentence = item.question.replace('___', item.answer);
+        answerRevealEl.innerHTML = `<span style="color: var(--red);">FEL. Betydelse av valt ord: ${selectedMeaning} (${selectedEnglishMeaning}).</span><br><span style="color: var(--green);">Rätt svar: ${item.answer}</span><br><span style="font-weight: 400; color: var(--muted);">English: ${translateSentence(fullSentence)}</span>`;
       }
 
-      answerRevealEl.classList.add('visible');
-      const fullSentence = item.question.replace('___', item.answer);
-      answerRevealEl.innerHTML = `Korrekt svar: ${item.answer}<br><span style="font-weight: 400; color: var(--muted);">English: ${translateSentence(fullSentence)}</span>`;
       const completeButton = document.querySelector(`.listen-complete[data-index="${index}"]`);
       if (completeButton) completeButton.classList.add('visible');
       updateSummary();
