@@ -231,7 +231,6 @@
     <div class="quiz-box" id="quiz"></div>
 
     <div class="controls">
-      <button type="button" id="checkBtn">Kontrollera svar</button>
       <button type="button" class="secondary" id="resetBtn">Rensa</button>
     </div>
 
@@ -471,10 +470,6 @@
       summaryEl.textContent = `Du har ${correct} rätt av ${questions.length}.`;
     }
 
-    function checkAnswers() {
-      updateSummary();
-    }
-
     function resetQuiz() {
       document.querySelectorAll('input[type="radio"]').forEach(input => {
         input.checked = false;
@@ -491,7 +486,6 @@
       summaryEl.textContent = '';
     }
 
-    document.getElementById('checkBtn').addEventListener('click', checkAnswers);
     document.getElementById('resetBtn').addEventListener('click', resetQuiz);
 
     renderQuiz();
