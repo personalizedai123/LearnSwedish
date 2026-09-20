@@ -256,11 +256,6 @@
                 : '';
         }
 
-        function checkAnswers() {
-            words.forEach((q, index) => checkAnswer(q, index));
-            const correctCount = words.filter((q, index) => checkAnswer(q, index)).length;
-            document.getElementById('summary').textContent = `Resultat: ${correctCount} av ${words.length} rätt.`;
-        }
     </script>
 </body>
 </html>

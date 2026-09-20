@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz: Satsadverbial</title>
+  <style>
+    :root {
+      --bg: #f7f4ec;
+      --paper: #fffdf7;
+      --ink: #17221d;
+      --muted: #65736b;
+      --line: #d9ded4;
+      --green: #176b54;
+      --green-dark: #0e4d3c;
+      --mint: #dceee4;
+      --yellow: #f3c969;
+      --red: #b64332;
+      --shadow: rgba(23, 34, 29, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      background: radial-gradient(circle at 8% 8%, #f3c96940, transparent 24rem),
+                  radial-gradient(circle at 92% 82%, #dceee4b3, transparent 28rem),
+                  var(--bg);
+      color: var(--ink);
+    }
+
+    main {
+      width: min(900px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 42px 0 60px;
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font: 700 12px Arial, sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0 12px;
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      line-height: .98;
+      font-weight: 500;
+      letter-spacing: -.04em;
+    }
+
+    .intro {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.55;
+      margin-bottom: 24px;
+    }
+
+    .quiz-box {
+      background: rgba(255, 253, 247, 0.9);
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 45px var(--shadow);
+      padding: 22px 22px 28px;
+    }
+
+    .question {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .question:last-child {
+      border-bottom: none;
+    }
+
+    .label {
+      display: block;
+      font-size: 1.08rem;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease;
+    }
+
+    .option:hover {
+      border-color: var(--green);
+      background: #f5faf7;
+    }
+
+    .option input {
+      accent-color: var(--green);
+      transform: scale(1.1);
+    }
+
+    .status {
+      min-height: 24px;
+      margin-top: 10px;
+      font: 700 0.82rem Arial, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .answer-reveal {
+      margin-top: 8px;
+      font: 700 0.8rem Arial, sans-serif;
+      color: var(--green-dark);
+      display: none;
+      line-height: 1.5;
+    }
+
+    .answer-reveal.visible {
+      display: block;
+    }
+
+    .listen-btn {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border: 1px solid var(--green);
+      background: transparent;
+      color: var(--green-dark);
+      font: 700 12px Arial, sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .listen-btn:hover {
+      background: var(--mint);
+    }
+
+    .status.correct {
+      color: var(--green-dark);
+    }
+
+    .status.incorrect {
+      color: var(--red);
+    }
+
+    .controls {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 25px;
+      align-items: center;
+    }
+
+    button {
+      border: 0;
+      padding: 13px 20px;
+      background: var(--green);
+      color: white;
+      font: 700 13px Arial, sans-serif;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    button.secondary {
+      background: #6b7a73;
+    }
+
+    button:hover {
+      filter: brightness(0.97);
+    }
+
+    .result-summary {
+      font: 700 14px Arial, sans-serif;
+      min-height: 24px;
+      margin-top: 4px;
+      color: var(--green-dark);
+    }
+
+    .nav-link {
+      display: inline-block;
+      margin-top: 18px;
+      color: var(--green);
+      text-decoration: none;
+      font: 700 14px Arial, sans-serif;
+    }
+
+    .nav-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Svenska · satsadverbial</div>
+    <h1>Quiz: Satsadverbial</h1>
+    <p class="intro">Välj det ord eller uttryck som passar bäst i meningen. Övningen bygger på de vanligaste satsadverbialen från bilden och utökar med fler exempel.</p>
+
+    <div class="quiz-box" id="quiz"></div>
+
+    <div class="controls">
+      <button type="button" id="checkBtn">Kontrollera svar</button>
+      <button type="button" class="secondary" id="resetBtn">Rensa</button>
+    </div>
+
+    <p class="result-summary" id="summary" aria-live="polite"></p>
+    <a class="nav-link" href="index.html">Tillbaka till startsidan</a>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        question: 'Jag ville gå ut, ___ det regnade.',
+        options: ['alltså', 'fortfarande', 'nämligen', 'tyvärr'],
+        answer: 'tyvärr'
+      },
+      {
+        question: 'Hon har ___ inte kommit hem.',
+        options: ['alltså', 'fortfarande', 'naturligtvis', 'verkligen'],
+        answer: 'fortfarande'
+      },
+      {
+        question: 'Vi kan ___ inte klara allt på en gång.',
+        options: ['knappt', 'alltså', 'ofta', 'nu för tiden'],
+        answer: 'knappt'
+      },
+      {
+        question: '___ kommer jag att hjälpa dig.',
+        options: ['Naturligtvis', 'Något', 'Knappt', 'Först'],
+        answer: 'Naturligtvis'
+      },
+      {
+        question: 'Jag var trött, ___ jag hade sovit dåligt.',
+        options: ['alltså', 'nämligen', 'säkert', 'inte'],
+        answer: 'nämligen'
+      },
+      {
+        question: '___ är det mycket trafik i stan.',
+        options: ['Nu för tiden', 'Alltså', 'Någon gång', 'Förmodligen'],
+        answer: 'Nu för tiden'
+      },
+      {
+        question: 'Det var ___ en mycket bra film.',
+        options: ['verkligen', 'alltså', 'fortfarande', 'förmodligen'],
+        answer: 'verkligen'
+      },
+      {
+        question: 'Jag har ___ inte tid att träffa dig idag.',
+        options: ['alltså', 'knappt', 'verkligen', 'naturligtvis'],
+        answer: 'knappt'
+      },
+      {
+        question: 'Han är sen, ___ han missade bussen.',
+        options: ['alltså', 'naturligtvis', 'tyvärr', 'ibland'],
+        answer: 'alltså'
+      },
+      {
+        question: '___ är det svårt att hitta parkering här.',
+        options: ['Tyvärr', 'Alltså', 'Verkligen', 'Någon gång'],
+        answer: 'Tyvärr'
+      },
+      {
+        question: 'Jag tror ___ att vi hinner till tåget.',
+        options: ['förmodligen', 'alltså', 'knappt', 'naturligtvis'],
+        answer: 'förmodligen'
+      },
+      {
+        question: '___ gör han sina läxor varje kväll.',
+        options: ['Oftast', 'Naturligtvis', 'Verkligen', 'Alltså'],
+        answer: 'Oftast'
+      },
+      {
+        question: 'Jag tycker att det är ___ roligt att vara här.',
+        options: ['verkligen', 'nämligen', 'ju', 'nu'],
+        answer: 'verkligen'
+      },
+      {
+        question: '___ vet vi att det blir regn senare.',
+        options: ['Säkert', 'Någon', 'Alltså', 'Knappt'],
+        answer: 'Säkert'
+      },
+      {
+        question: 'Jag kan ___ inte komma imorgon.',
+        options: ['tyvärr', 'alltså', 'fortfarande', 'ibland'],
+        answer: 'tyvärr'
+      },
+      {
+        question: 'Det var ___ det sista han sa innan han gick.',
+        options: ['nämligen', 'alltså', 'fortfarande', 'verkligen'],
+        answer: 'nämligen'
+      },
+      {
+        question: '___ har det blivit mer vanligt att arbeta hemifrån.',
+        options: ['Nu för tiden', 'Verkligen', 'Någon gång', 'Knappt'],
+        answer: 'Nu för tiden'
+      },
+      {
+        question: 'Jag är ___ trött efter jobbet.',
+        options: ['verkligen', 'alltså', 'naturligtvis', 'telefonsamtal'],
+        answer: 'verkligen'
+      },
+      {
+        question: 'Han är ___ hemma om han inte har något att göra.',
+        options: ['oftast', 'alltså', 'knappt', 'nämligen'],
+        answer: 'oftast'
+      },
+      {
+        question: '___ har vi inga bilar i den här staden.',
+        options: ['Naturligtvis', 'Knappt', 'Nämnligen', 'Nu för tiden'],
+        answer: 'Naturligtvis'
+      }
+    ];
+
+    const quizContainer = document.getElementById('quiz');
+    const summaryEl = document.getElementById('summary');
+
+    function renderQuiz() {
+      quizContainer.innerHTML = questions.map((item, index) => {
+        const optionHtml = item.options.map((option, optionIndex) => `
+          <label class="option">
+            <input type="radio" name="q${index}" value="${option}" />
+            <span>${option}</span>
+          </label>
+        `).join('');
+
+        const englishSentence = item.question.replace('___', item.answer);
+
+        return `
+          <div class="question">
+            <label class="label">${index + 1}. ${item.question}</label>
+            <div class="options">${optionHtml}</div>
+            <button class="listen-btn" type="button" data-index="${index}">Lyssna på meningen</button>
+            <div class="status" id="status-${index}"></div>
+            <div class="answer-reveal" id="answer-${index}">Korrekt svar: ${item.answer}<br><span style="font-weight: 400; color: var(--muted);">English: ${translateSentence(englishSentence)}</span></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function translateSentence(sentence) {
+      const translations = {
+        'Jag ville gå ut, tyvärr det regnade.': 'I wanted to go out, unfortunately it was raining.',
+        'Hon har fortfarande inte kommit hem.': 'She still has not come home.',
+        'Vi kan knappt inte klara allt på en gång.': 'We can barely manage everything at once.',
+        'Naturligtvis kommer jag att hjälpa dig.': 'Of course I will help you.',
+        'Jag var trött, nämligen jag hade sovit dåligt.': 'I was tired, because I had slept badly.',
+        'Nu för tiden är det mycket trafik i stan.': 'These days there is a lot of traffic in the city.',
+        'Det var verkligen en mycket bra film.': 'It was really a very good film.',
+        'Jag har knappt inte tid att träffa dig idag.': 'I hardly have time to meet you today.',
+        'Han är sen, alltså han missade bussen.': 'He is late, so he missed the bus.',
+        'Tyvärr är det svårt att hitta parkering här.': 'Unfortunately, it is difficult to find parking here.',
+        'Jag tror förmodligen att vi hinner till tåget.': 'I probably think we will make it to the train.',
+        'Oftast gör han sina läxor varje kväll.': 'He usually does his homework every evening.',
+        'Jag tycker att det är verkligen roligt att vara här.': 'I think it is really fun to be here.',
+        'Säkert vet vi att det blir regn senare.': 'We certainly know it will rain later.',
+        'Jag kan tyvärr inte komma imorgon.': 'I unfortunately cannot come tomorrow.',
+        'Det var nämligen det sista han sa innan han gick.': 'That was, in fact, the last thing he said before he left.',
+        'Nu för tiden har det blivit mer vanligt att arbeta hemifrån.': 'These days it has become more common to work from home.',
+        'Jag är verkligen trött efter jobbet.': 'I am really tired after work.',
+        'Han är oftast hemma om han inte har något att göra.': 'He is usually home if he does not have anything to do.',
+        'Naturligtvis har vi inga bilar i den här staden.': 'Of course, we do not have cars in this city.'
+      };
+
+      const normalized = sentence.trim();
+      return translations[normalized] || 'Translation not available';
+    }
+
+    function speakSentence(text) {
+      if (!('speechSynthesis' in window)) {
+        alert('Din webbläsare stödjer inte talfunktionen.');
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'sv-SE';
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('.listen-btn');
+      if (!button) return;
+
+      const index = Number(button.dataset.index);
+      if (!Number.isInteger(index)) return;
+
+      const sentence = questions[index].question;
+      speakSentence(sentence);
+    });
+
+    document.addEventListener('change', (event) => {
+      const radio = event.target.closest('input[type="radio"]');
+      if (!radio) return;
+
+      const name = radio.name;
+      const index = Number(name.replace('q', ''));
+      const item = questions[index];
+      const selectedValue = radio.value;
+      const statusEl = document.getElementById(`status-${index}`);
+      const answerRevealEl = document.getElementById(`answer-${index}`);
+
+      if (selectedValue === item.answer) {
+        statusEl.textContent = 'RÄTT';
+        statusEl.className = 'status correct';
+      } else {
+        statusEl.textContent = 'FEL';
+        statusEl.className = 'status incorrect';
+      }
+
+      answerRevealEl.classList.add('visible');
+      const fullSentence = item.question.replace('___', item.answer);
+      answerRevealEl.innerHTML = `Korrekt svar: ${item.answer}<br><span style="font-weight: 400; color: var(--muted);">English: ${translateSentence(fullSentence)}</span>`;
+      updateSummary();
+    });
+
+    function updateSummary() {
+      let correct = 0;
+      questions.forEach((item, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        if (selected && selected.value === item.answer) {
+          correct += 1;
+        }
+      });
+      summaryEl.textContent = `Du har ${correct} rätt av ${questions.length}.`;
+    }
+
+    function checkAnswers() {
+      updateSummary();
+    }
+
+    function resetQuiz() {
+      document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.checked = false;
+      });
+      document.querySelectorAll('.status').forEach(status => {
+        status.textContent = '';
+        status.className = 'status';
+      });
+      document.querySelectorAll('.answer-reveal').forEach(el => {
+        el.classList.remove('visible');
+        el.innerHTML = 'Korrekt svar: ';
+      });
+      summaryEl.textContent = '';
+    }
+
+    document.getElementById('checkBtn').addEventListener('click', checkAnswers);
+    document.getElementById('resetBtn').addEventListener('click', resetQuiz);
+
+    renderQuiz();
+  </script>
+</body>
+</html>
