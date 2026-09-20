@@ -148,6 +148,24 @@
       background: var(--mint);
     }
 
+    .listen-complete {
+      display: none;
+      margin-top: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--green);
+      background: var(--mint);
+      color: var(--green-dark);
+      font: 700 12px Arial, sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+
+    .listen-complete.visible {
+      display: inline-block;
+    }
+
     .status.correct {
       color: var(--green-dark);
     }
@@ -344,6 +362,7 @@
             <label class="label">${index + 1}. ${item.question}</label>
             <div class="options">${optionHtml}</div>
             <button class="listen-btn" type="button" data-index="${index}">Lyssna på meningen</button>
+            <button class="listen-complete" type="button" data-index="${index}">Lyssna på hela meningen</button>
             <div class="status" id="status-${index}"></div>
             <div class="answer-reveal" id="answer-${index}">Korrekt svar: ${item.answer}<br><span style="font-weight: 400; color: var(--muted);">English: ${translateSentence(englishSentence)}</span></div>
           </div>
@@ -394,13 +413,23 @@
     }
 
     document.addEventListener('click', (event) => {
-      const button = event.target.closest('.listen-btn');
-      if (!button) return;
+      const listenButton = event.target.closest('.listen-btn');
+      if (listenButton) {
+        const index = Number(listenButton.dataset.index);
+        if (!Number.isInteger(index)) return;
+        const sentence = questions[index].question;
+        speakSentence(sentence);
+        return;
+      }
 
-      const index = Number(button.dataset.index);
+      const fullSentenceButton = event.target.closest('.listen-complete');
+      if (!fullSentenceButton) return;
+
+      const index = Number(fullSentenceButton.dataset.index);
       if (!Number.isInteger(index)) return;
 
-      const sentence = questions[index].question;
+      const selected = document.querySelector(`input[name="q${index}"]:checked`);
+      const sentence = questions[index].question.replace('___', selected ? selected.value : questions[index].answer);
       speakSentence(sentence);
     });
 
@@ -426,6 +455,8 @@
       answerRevealEl.classList.add('visible');
       const fullSentence = item.question.replace('___', item.answer);
       answerRevealEl.innerHTML = `Korrekt svar: ${item.answer}<br><span style="font-weight: 400; color: var(--muted);">English: ${translateSentence(fullSentence)}</span>`;
+      const completeButton = document.querySelector(`.listen-complete[data-index="${index}"]`);
+      if (completeButton) completeButton.classList.add('visible');
       updateSummary();
     });
 
@@ -456,6 +487,7 @@
         el.classList.remove('visible');
         el.innerHTML = 'Korrekt svar: ';
       });
+      document.querySelectorAll('.listen-complete').forEach(el => el.classList.remove('visible'));
       summaryEl.textContent = '';
     }
 
