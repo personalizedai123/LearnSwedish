@@ -131,23 +131,6 @@
       display: block;
     }
 
-    .listen-btn {
-      margin-top: 10px;
-      padding: 8px 12px;
-      border: 1px solid var(--green);
-      background: transparent;
-      color: var(--green-dark);
-      font: 700 12px Arial, sans-serif;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-
-    .listen-btn:hover {
-      background: var(--mint);
-    }
-
     .listen-complete {
       display: none;
       margin-top: 8px;
@@ -360,7 +343,6 @@
           <div class="question">
             <label class="label">${index + 1}. ${item.question}</label>
             <div class="options">${optionHtml}</div>
-            <button class="listen-btn" type="button" data-index="${index}">Lyssna på meningen</button>
             <button class="listen-complete" type="button" data-index="${index}">Lyssna på hela meningen</button>
             <div class="status" id="status-${index}"></div>
             <div class="answer-reveal" id="answer-${index}">Korrekt svar: ${item.answer}<br><span style="font-weight: 400; color: var(--muted);">English: ${translateSentence(englishSentence)}</span></div>
@@ -412,15 +394,6 @@
     }
 
     document.addEventListener('click', (event) => {
-      const listenButton = event.target.closest('.listen-btn');
-      if (listenButton) {
-        const index = Number(listenButton.dataset.index);
-        if (!Number.isInteger(index)) return;
-        const sentence = questions[index].question;
-        speakSentence(sentence);
-        return;
-      }
-
       const fullSentenceButton = event.target.closest('.listen-complete');
       if (!fullSentenceButton) return;
 
