@@ -607,6 +607,28 @@
             button.addEventListener('click', () => speak(word));
             hint.insertAdjacentElement('afterend', button);
         });
+
+        document.querySelectorAll('.question-card').forEach(card => {
+            const questionText = card.querySelector('.question-text');
+            const input = questionText?.querySelector('input[type="text"]');
+            if (!questionText || !input) return;
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'listen sentence-listen';
+            button.textContent = 'Lyssna';
+            button.setAttribute('aria-label', 'Lyssna på hela meningen');
+            button.addEventListener('click', () => {
+                const sentencePreview = questionText.cloneNode(true);
+                sentencePreview.querySelector('.word-hint')?.remove();
+                sentencePreview.querySelector('.translation')?.remove();
+                sentencePreview.querySelector('.listen')?.remove();
+                const answer = input.value.trim() || input.getAttribute('data-answer').split('|')[0];
+                sentencePreview.querySelector('input')?.replaceWith(document.createTextNode(answer));
+                speak(sentencePreview.textContent.replace(/\s+/g, ' ').trim());
+            });
+            questionText.insertAdjacentElement('afterend', button);
+        });
     }
 
     addTranslations();
