@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz: Törnrosa på engelska</title>
+  <style>
+    :root { --ink: #17221d; --muted: #65736b; --paper: #f7f4ec; --card: #fffdf7; --line: #d9ded4; --green: #176b54; --green-dark: #0e4d3c; --mint: #dceee4; --coral: #b64332; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: var(--ink); background: radial-gradient(circle at 8% 8%, #f3c96940, transparent 24rem), radial-gradient(circle at 92% 82%, #dceee4b3, transparent 28rem), var(--paper); font-family: Georgia, 'Times New Roman', serif; }
+    main { width: min(920px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 60px; }
+    .eyebrow { color: var(--green); font: 700 12px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 10px 0; max-width: 700px; font-size: clamp(2.5rem, 7vw, 5rem); line-height: .95; font-weight: 500; letter-spacing: -.04em; }
+    .intro { margin: 0 0 28px; color: var(--muted); font-size: 1.1rem; line-height: 1.5; }
+    #quiz { padding: 24px; border: 1px solid var(--line); background: #fffdf7e6; box-shadow: 0 18px 45px #22362b1c; }
+    .question { padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .question:last-child { border-bottom: 0; }
+    .group-number { margin-bottom: 10px; font-size: 1.1rem; font-weight: 700; line-height: 1.45; }
+    .subquestion { padding: 10px 0 16px 22px; border-top: 1px solid var(--line); }
+    .subquestion:first-child { border-top: 0; }
+    .swedish { display: block; margin-bottom: 9px; font-size: 1.08rem; line-height: 1.45; }
+    .listen-button { padding: 7px 11px; margin: 0 0 10px; background: var(--mint); color: var(--green-dark); font-size: 12px; letter-spacing: .03em; text-transform: none; }
+    .listen-button:hover, .listen-button[aria-pressed="true"] { background: var(--green); color: white; }
+    .prompt { margin: 8px 0 10px; color: var(--green-dark); font: 700 14px Arial, sans-serif; }
+    .options { display: grid; gap: 8px; }
+    .option { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); background: var(--card); cursor: pointer; font-size: 1rem; }
+    .option:hover { border-color: var(--green); background: var(--mint); }
+    .option input { accent-color: var(--green); }
+    .option:has(input:checked) { border-color: var(--green); background: var(--mint); }
+    .feedback { min-height: 22px; margin-top: 8px; font: 700 13px Arial, sans-serif; line-height: 1.45; }
+    .correct { color: var(--green-dark); }
+    .incorrect { color: var(--coral); }
+    .answer { display: block; margin-top: 3px; color: var(--muted); font-weight: 400; }
+    .controls { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 22px; }
+    button { padding: 13px 20px; border: 0; background: var(--green); color: white; cursor: pointer; font: 700 13px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+    button:hover { background: var(--green-dark); }
+    button.secondary { background: #6b7a73; }
+    #summary { min-height: 22px; margin: 18px 0 0; font: 700 14px Arial, sans-serif; color: var(--green-dark); }
+    .nav-link { display: inline-block; margin-top: 18px; color: var(--green); text-decoration: none; font: 700 14px Arial, sans-serif; }
+    .nav-link:hover { text-decoration: underline; }
+    @media (max-width: 640px) { main { padding-top: 25px; } #quiz { padding: 18px; } }
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Svenska · läsförståelse</div>
+  <h1>Ord från Törnrosa</h1>
+  <p class="intro">Välj det engelska ordet som betyder samma sak som det markerade svenska ordet. Meningen hjälper dig att förstå ordet i sitt sammanhang.</p>
+  <div id="quiz"></div>
+  <div class="controls">
+    <button type="button" id="checkBtn">Kontrollera alla</button>
+    <button type="button" class="secondary" id="resetBtn">Rensa</button>
+  </div>
+  <p id="summary" aria-live="polite"></p>
+  <a class="nav-link" href="index.html">Tillbaka till startsidan</a>
+</main>
+<script>
+  const questions = [
+    ['Det var en gång en kung och en drottning som så gärna ville ha ett barn.', 'Once upon a time there was a king and a queen who very much wanted to have a child.'],
+    ['Åh om vi ändå hade ett barn, sa de till varandra varje dag.', 'Oh, if only we had a child, they said to each other every day.'],
+    ['Så en dag då drottningen satt i sitt badkar kröp en groda fram och sa:', 'Then one day, while the queen was sitting in her bathtub, a frog crawled out and said:'],
+    ['Din önskan ska gå i uppfyllelse.', 'Your wish will come true.'],
+    ['Innan ett år har gått kommer du att få en liten dotter.', 'Before a year has passed, you will have a little daughter.'],
+    ['Och så blev det.', 'And so it happened.'],
+    ['Drottningen födde en underbart vacker liten flicka.', 'The queen gave birth to a wonderfully beautiful little girl.'],
+    ['Nu ville kungen och drottningen fira med en stor fest på slottet för släkt och vänner.', 'Now the king and queen wanted to celebrate with a big party at the castle for relatives and friends.'],
+    ['De ville också bjuda in landets feer för att de skulle vara snälla mot barnet i framtiden.', 'They also wanted to invite the fairies of the kingdom so that they would be kind to the child in the future.'],
+    ['Nu var det så att det fanns tretton feer i landet men eftersom det bara fanns tolv guldtallrikar blev en fe inte bjuden.', 'There were thirteen fairies in the kingdom, but since there were only twelve golden plates, one fairy was not invited.'],
+    ['Det blev en ståtlig fest och mot slutet ville feerna ge gåvor till prinsessan.', 'It was a splendid party, and towards the end the fairies wanted to give gifts to the princess.'],
+    ['Den ena gav henne skönhet, den andra gav henne rikedom och så vidare, tills hon fått allt man kan önska sig här i världen.', 'One gave her beauty, another gave her wealth, and so on, until she had received everything one could wish for in this world.'],
+    ['När elva feer hade gett sina gåvor kom plötsligt den trettonde fen in.', 'When eleven fairies had given their gifts, the thirteenth fairy suddenly came in.'],
+    ['Nu ville hon hämnas för att hon inte blivit bjuden.', 'Now she wanted revenge because she had not been invited.'],
+    ['När prinsessan blir femton år ska hon sticka sig på en slända och dö! ropade hon ondskefullt och lämnade genast slottet.', 'When the princess turns fifteen, she will prick herself on a spindle and die! she shouted wickedly and immediately left the castle.'],
+    ['Men den tolfte fen hade ännu inte gett sin gåva.', 'But the twelfth fairy had not yet given her gift.'],
+    ['För att mildra den elaka fens spådom sa hon:', 'To soften the wicked fairy’s prophecy, she said:'],
+    ['Prinsessan ska inte dö men hon kommer att sova djupt i hundra år.', 'The princess will not die, but she will sleep deeply for a hundred years.'],
+    ['Kungen ville skydda sin älskade dotter och befallde att alla sländor i landet skulle brännas.', 'The king wanted to protect his beloved daughter and ordered that all the spindles in the kingdom be burned.'],
+    ['Prinsessan växte upp och de goda feernas önskningar gick i uppfyllelse.', 'The princess grew up and the good fairies’ wishes came true.'],
+    ['Hon blev både god, vacker och klok.', 'She became kind, beautiful and wise.'],
+    ['Den dagen hon fyllde femton år gick hon en stund ensam omkring och tittade i slottet.', 'On the day she turned fifteen, she walked around the castle alone for a while and looked around.'],
+    ['Hon gick uppför en trappa som hon aldrig sett förut och in genom en liten dörr.', 'She went up a staircase she had never seen before and through a little door.'],
+    ['I rummet satt en gumma och spann på en slända.', 'In the room, an old woman was sitting and spinning with a spindle.'],
+    ['O, får jag försöka spinna? undrade prinsessan.', 'Oh, may I try spinning? the princess wondered.'],
+    ['Hon sträckte fram handen, stack sig på sländan och föll ihop på sängen.', 'She reached out her hand, pricked herself on the spindle and collapsed onto the bed.'],
+    ['Där somnade hon genast djupt.', 'There she immediately fell into a deep sleep.'],
+    ['Det som den onda fen hade spått hade nu gått i uppfyllelse.', 'What the wicked fairy had foretold had now come true.'],
+    ['Alla andra sov.', 'Everyone else was asleep.'],
+    ['Kungen och drottningen och hovfolket sov.', 'The king and queen and the people at court were asleep.'],
+    ['Hästarna i stallet sov och flugorna på väggarna och hundarna på gården.', 'The horses in the stable were asleep, as were the flies on the walls and the dogs in the yard.'],
+    ['I köket sov kökspigan och kocken och elden slocknade i spisen.', 'In the kitchen, the kitchen maid and the cook were asleep, and the fire went out in the stove.'],
+    ['Allt blev tyst och stilla.', 'Everything became quiet and still.'],
+    ['Men runt omkring slottet började en törnroshäck växa upp.', 'But all around the castle, a thorn hedge began to grow.'],
+    ['För varje år blev den allt högre och högre och till slut såg man inte ens tornen på slottet.', 'Every year it grew higher and higher, and eventually one could not even see the towers of the castle.'],
+    ['Ute i landet talade man om den vackra prinsessan som skulle sova i hundra år.', 'Throughout the kingdom, people talked about the beautiful princess who was to sleep for a hundred years.'],
+    ['Och så blev det.', 'And so it happened.'],
+    ['Många prinsar försökte ta sig igenom törnroshäcken för att rädda den sovande prinsessan men de lyckades inte tränga igenom häcken.', 'Many princes tried to get through the thorn hedge to save the sleeping princess, but they did not manage to get through it.'],
+    ['De fastnade i de vassa taggarna och kunde inte komma loss.', 'They got caught in the sharp thorns and could not get free.'],
+    ['De dog en sorglig död.', 'They died a sad death.'],
+    ['Det gick en lång, lång tid.', 'A long, long time passed.'],
+    ['Ännu en prins kom till landet och hörde en gammal gubbe berätta om törnroshäcken och den vackra Törnrosa som sov i ett slott bakom häcken.', 'Another prince came to the kingdom and heard an old man tell about the thorn hedge and the beautiful Sleeping Beauty who slept in a castle behind the hedge.'],
+    ['Han hörde också om de stackars prinsar som hade dött i törnroshäcken.', 'He also heard about the poor princes who had died in the thorn hedge.'],
+    ['Jag är inte rädd.', 'I am not afraid.'],
+    ['Jag vill dit och se den sovande prinsessan, sa prinsen.', 'I want to go there and see the sleeping princess, said the prince.'],
+    ['Men nu hade de hundra åren gått och den dag hade kommit då Törnrosa skulle vakna igen.', 'But now the hundred years had passed and the day had come when Sleeping Beauty would wake up again.'],
+    ['De vassa taggarna i häcken förvandlades till rosor.', 'The sharp thorns in the hedge turned into roses.'],
+    ['Grenarna böjde sig åt sidan så prinsen kunde gå in till slottet.', 'The branches bent aside so that the prince could enter the castle.'],
+    ['Han gick från sal till sal och såg människor och djur sitta och sova.', 'He went from room to room and saw people and animals sitting and sleeping.'],
+    ['Till slut kom han till tornrummet där Törnrosa låg och sov.', 'At last he came to the tower room where Sleeping Beauty lay sleeping.'],
+    ['Hon var så vacker att han inte kunde ta ögonen ifrån henne.', 'She was so beautiful that he could not take his eyes off her.'],
+    ['Han böjde sig ner och kysste henne.', 'He bent down and kissed her.'],
+    ['Just då vaknade hon och såg vänligt på honom.', 'Just then she woke up and looked kindly at him.'],
+    ['Så gick de nerför trapporna tillsammans.', 'Then they went down the stairs together.'],
+    ['Kungen och drottningen vaknade och tittade förvånat på varandra.', 'The king and queen woke up and looked at each other in surprise.'],
+    ['Hästarna gnäggade i stallet och hundarna skällde på gården.', 'The horses neighed in the stable and the dogs barked in the yard.'],
+    ['Vad hände sedan?', 'What happened next?'],
+    ['Jo, prinsen och prinsessan gifte sig.', 'Well, the prince and the princess got married.'],
+    ['Det blev ett ståtligt bröllop som varade i dagarna tre och sedan levde de lyckliga i alla sina dagar.', 'There was a splendid wedding that lasted for three days, and then they lived happily ever after.']
+  ];
+
+  const wordQuestions = [
+    ['Det var en gång en kung och en drottning som så gärna ville ha ett barn.', 'drottning', 'queen'],
+    ['Det var en gång en kung och en drottning som så gärna ville ha ett barn.', 'gärna', 'eagerly'],
+    ['Det var en gång en kung och en drottning som så gärna ville ha ett barn.', 'barn', 'child'],
+    ['Åh om vi ändå hade ett barn, sa de till varandra varje dag.', 'varandra', 'each other'],
+    ['Så en dag då drottningen satt i sitt badkar kröp en groda fram och sa:', 'badkar', 'bathtub'],
+    ['Så en dag då drottningen satt i sitt badkar kröp en groda fram och sa:', 'groda', 'frog'],
+    ['Din önskan ska gå i uppfyllelse.', 'önskan', 'wish'],
+    ['Din önskan ska gå i uppfyllelse.', 'uppfyllelse', 'fulfilment'],
+    ['Innan ett år har gått kommer du att få en liten dotter.', 'innan', 'before'],
+    ['Innan ett år har gått kommer du att få en liten dotter.', 'dotter', 'daughter'],
+    ['Drottningen födde en underbart vacker liten flicka.', 'födde', 'gave birth to'],
+    ['Drottningen födde en underbart vacker liten flicka.', 'underbart', 'wonderfully'],
+    ['Nu ville kungen och drottningen fira med en stor fest på slottet.', 'fira', 'celebrate'],
+    ['Nu ville kungen och drottningen fira med en stor fest på slottet.', 'slottet', 'the castle'],
+    ['De ville också bjuda in landets feer för att de skulle vara snälla mot barnet.', 'bjuda in', 'invite'],
+    ['De ville också bjuda in landets feer för att de skulle vara snälla mot barnet.', 'feer', 'fairies'],
+    ['De ville också bjuda in landets feer för att de skulle vara snälla mot barnet.', 'framtiden', 'the future'],
+    ['Det fanns tretton feer i landet men en fe blev inte bjuden.', 'fanns', 'were / existed'],
+    ['Det fanns tretton feer i landet men en fe blev inte bjuden.', 'bjuden', 'invited'],
+    ['Det blev en ståtlig fest och feerna ville ge gåvor till prinsessan.', 'ståtlig', 'splendid'],
+    ['Den ena gav henne skönhet, den andra gav henne rikedom.', 'skönhet', 'beauty'],
+    ['Den ena gav henne skönhet, den andra gav henne rikedom.', 'rikedom', 'wealth'],
+    ['När elva feer hade gett sina gåvor kom den trettonde fen in.', 'plötsligt', 'suddenly'],
+    ['Nu ville hon hämnas för att hon inte blivit bjuden.', 'hämnas', 'take revenge'],
+    ['Prinsessan ska sticka sig på en slända och dö!', 'slända', 'spindle'],
+    ['Prinsessan ska sticka sig på en slända och dö!', 'ondskefullt', 'wickedly'],
+    ['Men den tolfte fen hade ännu inte gett sin gåva.', 'ännu', 'yet'],
+    ['För att mildra den elaka fens spådom sa hon:', 'mildra', 'soften'],
+    ['Prinsessan ska inte dö men hon kommer att sova djupt i hundra år.', 'sova', 'sleep'],
+    ['Kungen ville skydda sin älskade dotter.', 'älskade', 'beloved'],
+    ['Kungen befallde att alla sländor i landet skulle brännas.', 'befallde', 'ordered'],
+    ['Prinsessan växte upp och de goda feernas önskningar gick i uppfyllelse.', 'växte upp', 'grew up'],
+    ['Hon blev både god, vacker och klok.', 'klok', 'wise'],
+    ['Hon gick uppför en trappa som hon aldrig sett förut.', 'trappa', 'staircase'],
+    ['I rummet satt en gumma och spann på en slända.', 'gumma', 'old woman'],
+    ['I rummet satt en gumma och spann på en slända.', 'spann', 'spun'],
+    ['Hon sträckte fram handen, stack sig på sländan och föll ihop på sängen.', 'sträckte fram', 'reached out'],
+    ['Där somnade hon genast djupt.', 'genast', 'immediately'],
+    ['Det som den onda fen hade spått hade nu gått i uppfyllelse.', 'spått', 'foretold / predicted'],
+    ['Allt blev tyst och stilla.', 'tyst', 'quiet'],
+    ['Runt omkring slottet började en törnroshäck växa upp.', 'törnroshäck', 'thorn hedge'],
+    ['För varje år blev den allt högre och högre.', 'högre', 'higher'],
+    ['Många prinsar försökte ta sig igenom törnroshäcken.', 'försökte', 'tried'],
+    ['De fastnade i de vassa taggarna och kunde inte komma loss.', 'vassa', 'sharp'],
+    ['De fastnade i de vassa taggarna och kunde inte komma loss.', 'taggarna', 'the thorns'],
+    ['De dog en sorglig död.', 'sorglig', 'sad'],
+    ['En gammal gubbe berättade om den vackra Törnrosa.', 'berättade', 'told'],
+    ['Jag är inte rädd.', 'rädd', 'afraid'],
+    ['Jag vill dit och se den sovande prinsessan.', 'sovande', 'sleeping'],
+    ['De vassa taggarna i häcken förvandlades till rosor.', 'förvandlades', 'changed / turned into'],
+    ['Grenarna böjde sig åt sidan så prinsen kunde gå in till slottet.', 'grenarna', 'the branches'],
+    ['Han gick från sal till sal och såg människor och djur sitta och sova.', 'sal', 'room / hall'],
+    ['Hon var så vacker att han inte kunde ta ögonen ifrån henne.', 'vacker', 'beautiful'],
+    ['Han böjde sig ner och kysste henne.', 'kysste', 'kissed'],
+    ['Kungen och drottningen vaknade och tittade förvånat på varandra.', 'förvånat', 'in surprise'],
+    ['Hästarna gnäggade i stallet och hundarna skällde på gården.', 'gnäggade', 'neighed'],
+    ['Prinsen och prinsessan gifte sig.', 'gifte sig', 'got married'],
+    ['Det blev ett ståtligt bröllop som varade i dagarna tre.', 'bröllop', 'wedding'],
+    ['Sedan levde de lyckliga i alla sina dagar.', 'lyckliga', 'happily']
+  ];
+
+  const quiz = document.getElementById('quiz');
+  const summary = document.getElementById('summary');
+
+  function normalize(text) {
+    return text.toLowerCase().replace(/[“”"'!?.,:;()\[\]]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  function getOptions(index) {
+    const answer = wordQuestions[index][2];
+    const distractors = [1, 7, 13].map(offset => wordQuestions[(index + offset) % wordQuestions.length][2]);
+    return [...new Set([answer, ...distractors])].sort(() => ((index * 17) % 5) - 2);
+  }
+
+  function render() {
+    const groups = [];
+    wordQuestions.forEach((question, index) => {
+      const existingGroup = groups.find(group => group.sentence === question[0]);
+      if (existingGroup) existingGroup.items.push({ question, index });
+      else groups.push({ sentence: question[0], items: [{ question, index }] });
+    });
+    quiz.innerHTML = groups.map((group, groupIndex) => `
+      <section class="question">
+        <div class="group-number">${groupIndex + 1}. ${group.sentence}</div>
+        <button type="button" class="listen-button" data-sentence="${group.sentence.replace(/"/g, '&quot;')}" aria-pressed="false">Lyssna på meningen</button>
+        ${group.items.map(({ question: [, word], index }, itemIndex) => `
+          <div class="subquestion">
+            <div class="swedish">${String.fromCharCode(97 + itemIndex)}. Vad betyder <strong>${word}</strong> på engelska?</div>
+            <div class="options">${getOptions(index).map((option, optionIndex) => `
+              <label class="option" for="answer-${index}-${optionIndex}">
+                <input id="answer-${index}-${optionIndex}" name="answer-${index}" data-index="${index}" type="radio" value="${option}">
+                <span>${option}</span>
+              </label>
+            `).join('')}</div>
+            <div class="feedback" id="feedback-${index}" aria-live="polite"></div>
+          </div>
+        `).join('')}
+      </section>
+    `).join('');
+  }
+
+  function checkAnswer(index) {
+    const input = document.querySelector(`input[name="answer-${index}"]:checked`);
+    const feedback = document.getElementById(`feedback-${index}`);
+    const answer = wordQuestions[index][2];
+    if (!input) {
+      feedback.textContent = '';
+      feedback.className = 'feedback';
+      updateSummary();
+      return;
+    }
+    if (normalize(input.value) === normalize(answer)) {
+      feedback.innerHTML = 'Rätt!';
+      feedback.className = 'feedback correct';
+      feedback.setAttribute('aria-label', 'Rätt svar');
+    } else {
+      feedback.innerHTML = `Inte riktigt.<span class="answer">Facit: ${answer}</span>`;
+      feedback.className = 'feedback incorrect';
+      feedback.setAttribute('aria-label', 'Fel svar');
+    }
+    updateSummary();
+  }
+
+  function resetListenButtons() {
+    document.querySelectorAll('.listen-button').forEach(button => {
+      button.textContent = 'Lyssna';
+      button.setAttribute('aria-pressed', 'false');
+    });
+  }
+
+  function speakSentence(button) {
+    if (!('speechSynthesis' in window)) {
+      button.textContent = 'Uppläsning stöds inte';
+      return;
+    }
+    if (button.getAttribute('aria-pressed') === 'true') {
+      window.speechSynthesis.cancel();
+      resetListenButtons();
+      return;
+    }
+    window.speechSynthesis.cancel();
+    resetListenButtons();
+    const utterance = new SpeechSynthesisUtterance(button.dataset.sentence);
+    utterance.lang = 'sv-SE';
+    utterance.rate = 0.85;
+    button.textContent = '■ Stoppa';
+    button.setAttribute('aria-pressed', 'true');
+    utterance.onend = resetListenButtons;
+    utterance.onerror = resetListenButtons;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function updateSummary() {
+    const correct = wordQuestions.reduce((total, [, , answer], index) => {
+      const input = document.querySelector(`input[name="answer-${index}"]:checked`);
+      return total + (input && normalize(input.value) === normalize(answer) ? 1 : 0);
+    }, 0);
+    const answered = wordQuestions.filter(([,], index) => document.querySelector(`input[name="answer-${index}"]:checked`)).length;
+    summary.textContent = answered ? `Poäng: ${correct} av ${wordQuestions.length}. Besvarade: ${answered} av ${wordQuestions.length}.` : '';
+  }
+
+  function clearQuiz() {
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    resetListenButtons();
+    document.querySelectorAll('input').forEach(input => { input.checked = false; });
+    document.querySelectorAll('.feedback').forEach(feedback => { feedback.textContent = ''; feedback.className = 'feedback'; });
+    summary.textContent = '';
+  }
+
+  quiz.addEventListener('change', event => {
+    if (event.target.matches('input[type="radio"]')) checkAnswer(Number(event.target.dataset.index));
+  });
+  quiz.addEventListener('click', event => {
+    if (event.target.matches('.listen-button')) speakSentence(event.target);
+  });
+  document.getElementById('checkBtn').addEventListener('click', () => wordQuestions.forEach(([,], index) => checkAnswer(index)));
+  document.getElementById('resetBtn').addEventListener('click', clearQuiz);
+  render();
+</script>
+</body>
+</html>
