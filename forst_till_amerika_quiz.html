@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz: Först till Amerika</title>
+  <style>
+    :root {
+      --bg: #f7f4ec;
+      --paper: #fffdf7;
+      --ink: #17221d;
+      --muted: #65736b;
+      --line: #d9ded4;
+      --green: #176b54;
+      --green-dark: #0e4d3c;
+      --mint: #dceee4;
+      --yellow: #f3c969;
+      --red: #b64332;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at 8% 8%, #f3c96955, transparent 24rem),
+                  radial-gradient(circle at 92% 82%, #dceee4cc, transparent 28rem),
+                  var(--bg);
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+    main { width: min(900px, calc(100% - 28px)); margin: 0 auto; padding: 42px 0 60px; }
+    .eyebrow { color: var(--green); font: 700 12px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { max-width: 700px; margin: 10px 0 12px; font-size: clamp(2.6rem, 8vw, 5rem); line-height: .95; font-weight: 500; letter-spacing: -.04em; }
+    .intro { max-width: 720px; margin: 0 0 24px; color: var(--muted); font-size: 1.08rem; line-height: 1.55; }
+    .reading-box { margin-bottom: 30px; padding: 22px; border: 1px solid var(--line); background: #fffdf7e8; box-shadow: 0 12px 30px #22362b12; }
+    .reading-box h2 { margin-top: 0; }
+    .reading-intro { margin: 0 0 16px; color: var(--muted); line-height: 1.5; }
+    .sentence { padding: 13px 0; border-top: 1px solid var(--line); line-height: 1.5; }
+    .sentence:first-of-type { border-top: 0; }
+    .swedish { display: block; font-size: 1.04rem; }
+    .english { display: block; margin-top: 4px; color: var(--muted); font-family: Arial, sans-serif; font-size: .92rem; }
+    .listen-button { margin-top: 9px; padding: 8px 12px; border: 1px solid var(--green); border-radius: 8px; background: transparent; color: var(--green-dark); font-size: 12px; letter-spacing: .04em; }
+    .listen-button:hover, .listen-button:focus-visible { background: var(--mint); }
+    .progress-wrap { display: flex; justify-content: space-between; gap: 16px; margin: 0 0 8px; color: var(--muted); font: 700 12px Arial, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+    progress { width: 100%; height: 9px; margin-bottom: 22px; accent-color: var(--green); }
+    .quiz-box { padding: 10px 22px 24px; border: 1px solid var(--line); background: #fffdf7e8; box-shadow: 0 18px 45px #22362b1c; }
+    h2 { margin: 24px 0 4px; color: var(--green-dark); font-size: 1.35rem; font-weight: 500; }
+    .section-note { margin: 0 0 5px; color: var(--muted); font-size: .96rem; }
+    .question { padding: 19px 0; border-bottom: 1px solid var(--line); }
+    .question:last-child { border-bottom: 0; }
+    .question-text { display: block; margin-bottom: 12px; font-size: 1.08rem; line-height: 1.5; }
+    .options { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; transition: background .2s ease, border-color .2s ease; }
+    .option:hover, .option:has(input:focus-visible) { border-color: var(--green); background: #f5faf7; }
+    .option input { flex: 0 0 auto; margin-top: 3px; accent-color: var(--green); }
+    .feedback { min-height: 22px; margin: 9px 0 0; font: 700 .82rem Arial, sans-serif; line-height: 1.45; }
+    .feedback.correct { color: var(--green-dark); }
+    .feedback.incorrect { color: var(--red); }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 24px; }
+    button { padding: 13px 20px; border: 0; border-radius: 8px; background: var(--green); color: white; cursor: pointer; font: 700 13px Arial, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+    button:hover { background: var(--green-dark); }
+    button.secondary { background: #6b7a73; }
+    .summary { min-height: 26px; margin: 16px 0 0; color: var(--green-dark); font: 700 14px Arial, sans-serif; }
+    .nav-link { display: inline-block; margin-top: 18px; color: var(--green); text-decoration: none; font: 700 14px Arial, sans-serif; }
+    .nav-link:hover { text-decoration: underline; }
+    @media (max-width: 560px) { main { padding-top: 28px; } .quiz-box { padding-inline: 16px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Svenska · läsförståelse och ord</div>
+    <h1>Först till Amerika</h1>
+    <p class="intro">Testa om du minns hela texten. Välj ett svar i taget. Du får direkt återkoppling och en kort förklaring som hjälper dig att lära dig.</p>
+
+    <section class="reading-box" aria-labelledby="reading-title">
+      <h2 id="reading-title">Läs texten · svenska och engelska</h2>
+      <p class="reading-intro">Läs varje svensk mening först och jämför sedan med den engelska översättningen.</p>
+      <div class="sentence"><span class="swedish">För omkring 30 000 år sedan kom de första människorna till Amerika från Asien.</span><span class="english">About 30,000 years ago, the first people came to America from Asia.</span><button class="listen-button" type="button" data-sentence="För omkring 30 000 år sedan kom de första människorna till Amerika från Asien.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">På vintern kunde de vandra över Berings sund, eftersom det var täckt av is.</span><span class="english">In winter, they could walk across the Bering Strait because it was covered with ice.</span><button class="listen-button" type="button" data-sentence="På vintern kunde de vandra över Berings sund, eftersom det var täckt av is.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Nordiska vikingar besökte Nordamerika ungefär 500 år före Kristofer Columbus.</span><span class="english">Nordic Vikings visited North America about 500 years before Christopher Columbus.</span><button class="listen-button" type="button" data-sentence="Nordiska vikingar besökte Nordamerika ungefär 500 år före Kristofer Columbus.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Columbus trodde att jorden var rund och ville hitta en ny sjöväg västerut till Indien.</span><span class="english">Columbus believed that the Earth was round and wanted to find a new sea route west to India.</span><button class="listen-button" type="button" data-sentence="Columbus trodde att jorden var rund och ville hitta en ny sjöväg västerut till Indien.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Det spanska kungaparet gav honom ekonomiskt stöd till expeditionen.</span><span class="english">The Spanish royal couple gave him financial support for the expedition.</span><button class="listen-button" type="button" data-sentence="Det spanska kungaparet gav honom ekonomiskt stöd till expeditionen.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Sjömännen blev rädda när resan tog mycket längre tid än väntat.</span><span class="english">The sailors became afraid when the journey took much longer than expected.</span><button class="listen-button" type="button" data-sentence="Sjömännen blev rädda när resan tog mycket längre tid än väntat.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">De trodde att de skulle segla ut över jordens kant och falla ner.</span><span class="english">They thought they would sail over the edge of the Earth and fall off.</span><button class="listen-button" type="button" data-sentence="De trodde att de skulle segla ut över jordens kant och falla ner.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">För att lugna dem förde Columbus två loggböcker.</span><span class="english">To calm them down, Columbus kept two logbooks.</span><button class="listen-button" type="button" data-sentence="För att lugna dem förde Columbus två loggböcker.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">I den ena skrev han det riktiga avståndet, och i den andra visade han ett kortare avstånd för besättningen.</span><span class="english">In one he wrote the real distance, and in the other he showed a shorter distance to the crew.</span><button class="listen-button" type="button" data-sentence="I den ena skrev han det riktiga avståndet, och i den andra visade han ett kortare avstånd för besättningen.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Den 12 oktober 1492 nådde expeditionen Bahamas.</span><span class="english">On October 12, 1492, the expedition reached the Bahamas.</span><button class="listen-button" type="button" data-sentence="Den 12 oktober 1492 nådde expeditionen Bahamas.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Columbus trodde att han hade kommit till Indien.</span><span class="english">Columbus thought that he had reached India.</span><button class="listen-button" type="button" data-sentence="Columbus trodde att han hade kommit till Indien.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Därför kallade han människorna där för indianer.</span><span class="english">That is why he called the people there Indians.</span><button class="listen-button" type="button" data-sentence="Därför kallade han människorna där för indianer.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Columbus förstod faktiskt aldrig helt att han hade hittat en ny kontinent.</span><span class="english">In fact, Columbus never fully understood that he had found a new continent.</span><button class="listen-button" type="button" data-sentence="Columbus förstod faktiskt aldrig helt att han hade hittat en ny kontinent.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Det var italienaren Amerigo Vespucci som insåg detta.</span><span class="english">It was the Italian Amerigo Vespucci who realized this.</span><button class="listen-button" type="button" data-sentence="Det var italienaren Amerigo Vespucci som insåg detta.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Kontinenten fick därför namnet Amerika efter honom.</span><span class="english">The continent was therefore named America after him.</span><button class="listen-button" type="button" data-sentence="Kontinenten fick därför namnet Amerika efter honom.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Människorna i Västindien betalade ett fruktansvärt pris genom sjukdomar, död och slaveri.</span><span class="english">The people of the West Indies paid a terrible price through disease, death, and slavery.</span><button class="listen-button" type="button" data-sentence="Människorna i Västindien betalade ett fruktansvärt pris genom sjukdomar, död och slaveri.">Lyssna</button></div>
+      <div class="sentence"><span class="swedish">Columbus var mest intresserad av guld, rikedom och ära.</span><span class="english">Columbus was mainly interested in gold, wealth, and glory.</span><button class="listen-button" type="button" data-sentence="Columbus var mest intresserad av guld, rikedom och ära.">Lyssna</button></div>
+    </section>
+
+    <div class="progress-wrap"><span id="progressText">0 av 20 besvarade</span><span id="scoreText">Poäng: 0</span></div>
+    <progress id="progress" value="0" max="20" aria-label="Hur många frågor som är besvarade"></progress>
+    <section class="quiz-box" id="quiz" aria-label="Quizfrågor"></section>
+
+    <div class="controls">
+      <button type="button" id="resetBtn" class="secondary">Börja om</button>
+    </div>
+    <p class="summary" id="summary" aria-live="polite"></p>
+    <a class="nav-link" href="index.html">Tillbaka till startsidan</a>
+  </main>
+
+  <script>
+    const listenButtons = document.querySelectorAll('.listen-button');
+
+    function resetListenButtons() {
+      listenButtons.forEach(button => {
+        button.textContent = 'Lyssna';
+        button.setAttribute('aria-pressed', 'false');
+      });
+    }
+
+    listenButtons.forEach(button => {
+      button.setAttribute('aria-label', `Lyssna på: ${button.dataset.sentence}`);
+      button.addEventListener('click', () => {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        resetListenButtons();
+        const utterance = new SpeechSynthesisUtterance(button.dataset.sentence);
+        utterance.lang = 'sv-SE';
+        utterance.rate = 0.85;
+        button.textContent = 'Stoppa';
+        button.setAttribute('aria-pressed', 'true');
+        utterance.onend = resetListenButtons;
+        utterance.onerror = resetListenButtons;
+        window.speechSynthesis.speak(utterance);
+      });
+    });
+
+    const sections = [
+      {
+        title: 'Del 1 · Förstå texten',
+        note: 'Följ resan från de första människorna till namnet Amerika.',
+        questions: [
+          ['Vilka var de allra första människorna som kom till Amerika?', ['Människor från Europa', 'Människor från Asien', 'Vikingar från Sverige', 'Spanjorer'], 1, 'De kom från Asien för omkring 30 000 år sedan.'],
+          ['Hur tog de första människorna sig till Amerika?', ['Med stora segelfartyg', 'Genom en tunnel under havet', 'Genom att vandra över det frusna Berings sund', 'Med flygande båtar'], 2, 'Berings sund var täckt av is under vintern.'],
+          ['När besökte nordiska vikingar Nordamerika?', ['Cirka 500 år före Columbus', 'Efter Columbus', 'För 30 000 år sedan', 'På 1700-talet'], 0, 'Vikingarna kom ungefär 500 år före Kristofer Columbus.'],
+          ['Vad ville Columbus hitta genom att segla västerut?', ['En väg till Afrika', 'En ny sjöväg till Indien', 'En väg till Australien', 'En ny väg till Sverige'], 1, 'Han trodde att en västlig väg kunde leda till Indien.'],
+          ['Vem gav Columbus ekonomiskt stöd?', ['Det engelska parlamentet', 'Kungen av Portugal', 'Det spanska kungaparet', 'Amerigo Vespucci'], 2, 'Det spanska kungaparet betalade för expeditionen.'],
+          ['Varför blev sjömännen rädda under resan?', ['De såg en storm på land', 'Resan tog längre tid än väntat och de trodde att de kunde segla över jordens kant', 'De ville inte hitta Indien', 'De hade glömt kartan hemma'], 1, 'De var rädda att falla av jorden när resan drog ut på tiden.'],
+          ['Vad gjorde Columbus för att lugna besättningen?', ['Han vände skeppen hemåt', 'Han gav alla guld', 'Han förde dubbla loggböcker', 'Han berättade att havet var fruset'], 2, 'Den ena loggboken visade ett kortare avstånd än det verkliga.'],
+          ['Vilket datum nådde expeditionen Bahamas?', ['12 oktober 1492', '12 oktober 1392', '24 december 1492', '1 januari 1500'], 0, 'Den 12 oktober 1492 gick de i land på Bahamas.'],
+          ['Vad trodde Columbus att han hade hittat?', ['Sydpolen', 'Indien', 'Vikingarnas hemland', 'En ny måne'], 1, 'Därför kallade han människorna där för indianer.'],
+          ['Vem insåg att området var en helt ny kontinent?', ['Columbus själv', 'Det spanska kungaparet', 'Amerigo Vespucci', 'En av Columbus sjömän'], 2, 'Amerigo Vespucci förstod att det var en ny kontinent.'],
+          ['Hur gick det för många människor i Västindien?', ['De blev rika på guld', 'De betalade ett fruktansvärt pris genom sjukdomar, död och slaveri', 'De flyttade frivilligt till Spanien', 'De fick nya skepp'], 1, 'Urfolk drabbades hårt av sjukdomar, våld och förslavande.'],
+          ['Vad var Columbus mest intresserad av?', ['Guld, rikedom och ära', 'Att lära sig alla språk', 'Att studera isen', 'Att hitta vikingarna'], 0, 'Hans främsta intressen var guld, rikedom och ära.']
+        ]
+      },
+      {
+        title: 'Del 2 · Viktiga ord',
+        note: 'Koppla ihop orden med rätt betydelse.',
+        questions: [
+          ['Vad betyder urfolk eller urbefolkning?', ['Människor som ursprungligen bor i ett område', 'Människor som arbetar på ett skepp', 'Människor som kommer sist', 'Människor som skriver kartor'], 0, 'Urfolk är de människor som var först i ett område.'],
+          ['Vad är en expedition?', ['En kort promenad', 'En lång och planerad forsknings- eller upptäcktsresa', 'En bok om historia', 'En sorts loggbok'], 1, 'En expedition är en planerad resa med ett särskilt mål.'],
+          ['Vad skriver man i en loggbok?', ['Bara väderprognosen', 'Händelser och hur långt man har seglat', 'Alla besättningsmedlemmars namn', 'Recept på mat'], 1, 'Loggboken fungerar som en dagbok ombord.'],
+          ['Vad betyder mellanlanda?', ['Att landa flera gånger på samma plats', 'Att stanna till under en längre resa innan man reser vidare', 'Att lämna skeppet för alltid', 'Att bygga en ny stad'], 1, 'Man gör ett stopp på vägen.'],
+          ['Vad betyder fast mark?', ['Djupet i havet', 'Fast land eller jord, inte havet', 'En frusen våg', 'En träplanka på ett skepp'], 1, 'Fast mark är land där man kan stå eller gå.'],
+          ['Vad betyder misstag?', ['När man gör rätt från början', 'När man gör fel eller missuppfattar något', 'När man hittar guld', 'När en resa går snabbt'], 1, 'Columbus gjorde ett misstag när han trodde att han var i Indien.'],
+          ['Vad betyder inspireras av?', ['Att få idéer eller motivation från någon eller något', 'Att bli rädd för någon', 'Att resa utan karta', 'Att skriva två loggböcker'], 0, 'Man får inspiration och idéer från en förebild eller upplevelse.'],
+          ['Vad betyder ”i hans spår”?', ['Att gå bakom honom på en väg', 'Att göra samma sak som någon annan gjort tidigare', 'Att hitta hans skor', 'Att glömma en gammal idé'], 1, 'Uttrycket betyder att följa någon annans exempel.']
+        ]
+      }
+    ];
+
+    const allQuestions = sections.flatMap(section => section.questions);
+    const quiz = document.getElementById('quiz');
+    const progress = document.getElementById('progress');
+    const progressText = document.getElementById('progressText');
+    const scoreText = document.getElementById('scoreText');
+    const summary = document.getElementById('summary');
+
+    function render() {
+      let questionNumber = 0;
+      quiz.innerHTML = sections.map(section => {
+        const questions = section.questions.map((item) => {
+          const [text, options, answer, explanation] = item;
+          const index = questionNumber++;
+          return `<div class="question" data-index="${index}">
+            <span class="question-text">${index + 1}. ${text}</span>
+            <ul class="options">${options.map((option, optionIndex) => `<li><label class="option"><input type="radio" name="question-${index}" value="${optionIndex}"> <span>${option}</span></label></li>`).join('')}</ul>
+            <p class="feedback" id="feedback-${index}" aria-live="polite"></p>
+          </div>`;
+        }).join('');
+        return `<h2>${section.title}</h2><p class="section-note">${section.note}</p>${questions}`;
+      }).join('');
+    }
+
+    function updateStatus() {
+      const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+      let score = 0;
+      allQuestions.forEach(([, , answer], index) => {
+        const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+        if (selected && Number(selected.value) === answer) score++;
+      });
+      progress.value = answered;
+      progressText.textContent = `${answered} av ${allQuestions.length} besvarade`;
+      scoreText.textContent = `Poäng: ${score}`;
+      summary.textContent = answered === allQuestions.length ? `Klart! Du fick ${score} av ${allQuestions.length} poäng.` : '';
+    }
+
+    quiz.addEventListener('change', event => {
+      if (!event.target.matches('input[type="radio"]')) return;
+      const question = event.target.closest('.question');
+      const index = Number(question.dataset.index);
+      const [, options, answer, explanation] = allQuestions[index];
+      const feedback = document.getElementById(`feedback-${index}`);
+      const correct = Number(event.target.value) === answer;
+      feedback.className = `feedback ${correct ? 'correct' : 'incorrect'}`;
+      feedback.textContent = correct ? `Rätt! ${explanation}` : `Inte riktigt. Rätt svar: ${options[answer]}. ${explanation}`;
+      updateStatus();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      document.querySelectorAll('input[type="radio"]').forEach(input => { input.checked = false; });
+      document.querySelectorAll('.feedback').forEach(feedback => { feedback.textContent = ''; feedback.className = 'feedback'; });
+      updateStatus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    render();
+  </script>
+</body>
+</html>
