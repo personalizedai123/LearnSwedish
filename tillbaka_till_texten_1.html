@@ -18,6 +18,7 @@
     .question { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(150px, 220px); gap: 12px; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--line); }
     .question:last-child { border-bottom: 0; }
     .sentence { line-height: 1.5; }
+    .translation { display: block; margin-top: 4px; color: var(--muted); font: 14px/1.45 Arial, sans-serif; }
     input { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); background: white; color: var(--ink); font: 16px Georgia, serif; }
     input:focus { outline: 3px solid var(--mint); border-color: var(--green); }
     input.correct { border-color: var(--green); background: #f0f8f2; }
@@ -53,16 +54,16 @@
   </main>
   <script>
     const questions = [
-      { sentence: 'Bertha var ___ om att bilen kunde bli användbar.', answer: 'övertygad' },
-      { sentence: 'Hon ville visa att bilen kunde ___ på vanliga vägar.', answer: 'fungera' },
-      { sentence: 'Hon körde ett långt ___ mellan två städer.', answer: 'avstånd' },
-      { sentence: 'Makens idé skulle till slut ___.', answer: 'bli verklighet' },
-      { sentence: 'Resans ___ var att visa att bilen fungerade.', answer: 'syfte' },
-      { sentence: 'Bertha lämnade ___ i bilens historia.', answer: 'spår' },
-      { sentence: 'Hon deltog i en ___ för att visa vad bilen kunde göra.', answer: 'tävling' },
-      { sentence: 'Bertha kunde ___ resan i detalj.', answer: 'beskriva' },
-      { sentence: 'Sådana resor kunde ___ under flera dagar.', answer: 'ske' },
-      { sentence: 'Hon ville ___ målet att visa bilens möjligheter.', answer: 'uppnå' }
+      { sentence: 'Bertha var ___ om att bilen kunde bli användbar.', translation: 'Bertha was ___ that the car could be useful.', answer: 'övertygad' },
+      { sentence: 'Hon ville visa att bilen kunde ___ på vanliga vägar.', translation: 'She wanted to show that the car could ___ on ordinary roads.', answer: 'fungera' },
+      { sentence: 'Hon körde ett långt ___ mellan två städer.', translation: 'She drove a long ___ between two cities.', answer: 'avstånd' },
+      { sentence: 'Makens idé skulle till slut ___.', translation: 'Her husband’s idea would eventually ___.', answer: 'bli verklighet' },
+      { sentence: 'Resans ___ var att visa att bilen fungerade.', translation: 'The ___ of the trip was to show that the car worked.', answer: 'syfte' },
+      { sentence: 'Bertha lämnade ___ i bilens historia.', translation: 'Bertha left a ___ in automotive history.', answer: 'spår' },
+      { sentence: 'Hon deltog i en ___ för att visa vad bilen kunde göra.', translation: 'She took part in a ___ to show what the car could do.', answer: 'tävling' },
+      { sentence: 'Bertha kunde ___ resan i detalj.', translation: 'Bertha could ___ the journey in detail.', answer: 'beskriva' },
+      { sentence: 'Sådana resor kunde ___ under flera dagar.', translation: 'Such journeys could ___ for several days.', answer: 'ske' },
+      { sentence: 'Hon ville ___ målet att visa bilens möjligheter.', translation: 'She wanted to ___ her goal of showing what the car could do.', answer: 'uppnå' }
     ];
     const words = ['avstånd', 'beskriva', 'bli verklighet', 'fungera', 'ske', 'spår', 'syfte', 'tävling', 'övertygad', 'uppnå'];
     const quiz = document.getElementById('quiz');
@@ -70,7 +71,7 @@
     questions.forEach((question, index) => {
       const row = document.createElement('div');
       row.className = 'question';
-      row.innerHTML = `<span class="sentence">${index + 1}. ${question.sentence}</span><span class="entry"><input type="text" autocomplete="off" aria-label="Svar ${index + 1}"><span class="feedback" aria-live="polite"></span></span>`;
+      row.innerHTML = `<span class="sentence">${index + 1}. ${question.sentence}<span class="translation" lang="en">${question.translation}</span></span><span class="entry"><input type="text" autocomplete="off" aria-label="Svar ${index + 1}"><span class="feedback" aria-live="polite"></span></span>`;
       const listenButton = document.createElement('button');
       listenButton.type = 'button';
       listenButton.className = 'listen-button';

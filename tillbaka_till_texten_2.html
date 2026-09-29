@@ -18,6 +18,7 @@
     .question { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(150px, 220px); gap: 12px; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--line); }
     .question:last-child { border-bottom: 0; }
     .sentence { line-height: 1.5; }
+    .translation { display: block; margin-top: 4px; color: var(--muted); font: 14px/1.45 Arial, sans-serif; }
     input { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); background: white; color: var(--ink); font: 16px Georgia, serif; }
     input:focus { outline: 3px solid var(--mint); border-color: var(--green); }
     input.correct { border-color: var(--green); background: #f0f8f2; }
@@ -53,12 +54,12 @@
   </main>
   <script>
     const questions = [
-      { sentence: 'Det var en ___ resa genom okända trakter.', answer: 'äventyrlig' },
-      { sentence: 'Författaren försökte ___ hur livet såg ut då.', answer: 'beskriva' },
-      { sentence: 'Lagen skulle ___ människorna från orättvisor.', answer: 'beskydda' },
-      { sentence: 'Hon ville ___ de människor som behövde hjälp.', answer: 'bry sig om' },
-      { sentence: 'Konstnären ville ___ en bild av sin samtid.', answer: 'framställa' },
-      { sentence: 'Efter lång kamp lyckades de ___ fångarna.', answer: 'befria' }
+      { sentence: 'Det var en ___ resa genom okända trakter.', translation: 'It was an ___ journey through unknown territory.', answer: 'äventyrlig' },
+      { sentence: 'Författaren försökte ___ hur livet såg ut då.', translation: 'The author tried to ___ what life was like back then.', answer: 'beskriva' },
+      { sentence: 'Lagen skulle ___ människorna från orättvisor.', translation: 'The law was meant to ___ people from injustice.', answer: 'beskydda' },
+      { sentence: 'Hon ville ___ de människor som behövde hjälp.', translation: 'She wanted to ___ the people who needed help.', answer: 'bry sig om' },
+      { sentence: 'Konstnären ville ___ en bild av sin samtid.', translation: 'The artist wanted to ___ an image of her time.', answer: 'framställa' },
+      { sentence: 'Efter lång kamp lyckades de ___ fångarna.', translation: 'After a long struggle, they managed to ___ the prisoners.', answer: 'befria' }
     ];
     const words = ['äventyrlig', 'befria', 'beskriva', 'beskydda', 'bry sig om', 'framställa'];
     const quiz = document.getElementById('quiz');
@@ -66,7 +67,7 @@
     questions.forEach((question, index) => {
       const row = document.createElement('div');
       row.className = 'question';
-      row.innerHTML = `<span class="sentence">${index + 1}. ${question.sentence}</span><span class="entry"><input type="text" autocomplete="off" aria-label="Svar ${index + 1}"><span class="feedback" aria-live="polite"></span></span>`;
+      row.innerHTML = `<span class="sentence">${index + 1}. ${question.sentence}<span class="translation" lang="en">${question.translation}</span></span><span class="entry"><input type="text" autocomplete="off" aria-label="Svar ${index + 1}"><span class="feedback" aria-live="polite"></span></span>`;
       const listenButton = document.createElement('button');
       listenButton.type = 'button';
       listenButton.className = 'listen-button';

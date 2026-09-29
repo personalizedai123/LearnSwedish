@@ -18,6 +18,7 @@
     .question { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(150px, 220px); gap: 12px; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--line); }
     .question:last-child { border-bottom: 0; }
     .sentence { line-height: 1.5; }
+    .translation { display: block; margin-top: 4px; color: var(--muted); font: 14px/1.45 Arial, sans-serif; }
     input { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); background: white; color: var(--ink); font: 16px Georgia, serif; }
     input:focus { outline: 3px solid var(--mint); border-color: var(--green); }
     input.correct { border-color: var(--green); background: #f0f8f2; }
@@ -53,13 +54,13 @@
   </main>
   <script>
     const questions = [
-      { sentence: 'Arbetsgruppen ___ forskare från flera länder.', answer: 'består av' },
-      { sentence: 'Hon blev en ___ företagsledare.', answer: 'förmögen' },
-      { sentence: 'Man ska inte ___ pengar med lycka.', answer: 'likställa' },
-      { sentence: 'Varje ___ i gruppen fick komma till tals.', answer: 'person' },
-      { sentence: 'De valde att ___ sina pengar på utbildning.', answer: 'spendera' },
-      { sentence: 'Han fortsatte att ___ efter sitt mål.', answer: 'sträva' },
-      { sentence: 'Vi fick ett bra ___ att öva svenska tillsammans.', answer: 'tillfälle' }
+      { sentence: 'Arbetsgruppen ___ forskare från flera länder.', translation: 'The working group ___ researchers from several countries.', answer: 'består av' },
+      { sentence: 'Hon blev en ___ företagsledare.', translation: 'She became a ___ business leader.', answer: 'förmögen' },
+      { sentence: 'Man ska inte ___ pengar med lycka.', translation: 'You should not ___ money with happiness.', answer: 'likställa' },
+      { sentence: 'Varje ___ i gruppen fick komma till tals.', translation: 'Every ___ in the group got a chance to speak.', answer: 'person' },
+      { sentence: 'De valde att ___ sina pengar på utbildning.', translation: 'They chose to ___ their money on education.', answer: 'spendera' },
+      { sentence: 'Han fortsatte att ___ efter sitt mål.', translation: 'He continued to ___ toward his goal.', answer: 'sträva' },
+      { sentence: 'Vi fick ett bra ___ att öva svenska tillsammans.', translation: 'We got a good ___ to practice Swedish together.', answer: 'tillfälle' }
     ];
     const words = ['bestå av', 'förmögen', 'likställa', 'person', 'spendera', 'sträva', 'tillfälle'];
     const quiz = document.getElementById('quiz');
@@ -67,7 +68,7 @@
     questions.forEach((question, index) => {
       const row = document.createElement('div');
       row.className = 'question';
-      row.innerHTML = `<span class="sentence">${index + 1}. ${question.sentence}</span><span class="entry"><input type="text" autocomplete="off" aria-label="Svar ${index + 1}"><span class="feedback" aria-live="polite"></span></span>`;
+      row.innerHTML = `<span class="sentence">${index + 1}. ${question.sentence}<span class="translation" lang="en">${question.translation}</span></span><span class="entry"><input type="text" autocomplete="off" aria-label="Svar ${index + 1}"><span class="feedback" aria-live="polite"></span></span>`;
       const listenButton = document.createElement('button');
       listenButton.type = 'button';
       listenButton.className = 'listen-button';
