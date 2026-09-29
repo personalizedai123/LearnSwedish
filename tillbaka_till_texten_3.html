@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tillbaka till texten: ord och uttryck</title>
+  <style>
+    :root { --paper: #f7f4ec; --card: #fffdf7; --ink: #17221d; --muted: #65736b; --line: #d9ded4; --green: #176b54; --green-dark: #0e4d3c; --mint: #dceee4; --red: #b64332; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: var(--ink); background: radial-gradient(circle at 8% 8%, #f3c96940, transparent 24rem), radial-gradient(circle at 92% 82%, #dceee4b3, transparent 28rem), var(--paper); font-family: Georgia, 'Times New Roman', serif; }
+    main { width: min(850px, calc(100% - 32px)); margin: 0 auto; padding: 42px 0 60px; }
+    .eyebrow { color: var(--green); font: 700 12px Arial, sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { margin: 10px 0; font-size: clamp(2.3rem, 7vw, 4rem); line-height: 1; font-weight: 500; }
+    .intro { margin: 0 0 24px; color: var(--muted); font-size: 1.08rem; line-height: 1.5; }
+    .word-bank { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+    .word-bank span { padding: 7px 10px; border: 1px solid var(--line); background: var(--card); font-size: .95rem; }
+    #quiz { padding: 8px 22px; border: 1px solid var(--line); background: #fffdf7e8; box-shadow: 0 18px 45px #22362b1c; }
+    .question { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(150px, 220px); gap: 12px; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--line); }
+    .question:last-child { border-bottom: 0; }
+    .sentence { line-height: 1.5; }
+    input { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid var(--line); background: white; color: var(--ink); font: 16px Georgia, serif; }
+    input:focus { outline: 3px solid var(--mint); border-color: var(--green); }
+    input.correct { border-color: var(--green); background: #f0f8f2; }
+    input.incorrect { border-color: var(--red); background: #fff3f0; }
+    .entry { display: grid; gap: 4px; }
+    .feedback { min-height: 16px; font: 700 12px Arial, sans-serif; }
+    .feedback.correct { color: var(--green-dark); }
+    .feedback.incorrect { color: var(--red); }
+    .controls { display: flex; gap: 10px; margin-top: 20px; }
+    button { padding: 12px 18px; border: 0; background: var(--green); color: white; cursor: pointer; font: 700 13px Arial, sans-serif; text-transform: uppercase; }
+    button.secondary { background: #6b7a73; }
+    button.listen-button { justify-self: start; margin: 0; padding: 8px 11px; border: 1px solid var(--green); background: transparent; color: var(--green-dark); font: 700 12px Arial, sans-serif; text-transform: none; }
+    button.listen-button:hover { background: var(--mint); }
+    button:hover { filter: brightness(.94); }
+    #summary { min-height: 24px; margin: 18px 0 0; font: 700 14px Arial, sans-serif; }
+    .nav-link { display: inline-block; margin-top: 18px; color: var(--green); font: 700 14px Arial, sans-serif; text-decoration: none; }
+    .nav-link:hover { text-decoration: underline; }
+    @media (max-width: 600px) { main { padding-top: 28px; } #quiz { padding: 4px 16px; } .question { grid-template-columns: 1fr; gap: 8px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Svenska · Tillbaka till texten · 3</div>
+    <h1>Ord och uttryck</h1>
+    <p class="intro">Skriv in rätt ord eller uttryck från ordlistan. Tänk på böjningen.</p>
+    <div class="word-bank" aria-label="Ord att använda"></div>
+    <div id="quiz"></div>
+    <div class="controls">
+      <button type="button" class="secondary" id="reset">Rensa</button>
+    </div>
+    <p id="summary" aria-live="polite"></p>
+    <a class="nav-link" href="index.html">Tillbaka till startsidan</a>
+  </main>
+  <script>
+    const questions = [
+      { sentence: 'Arbetsgruppen ___ forskare från flera länder.', answer: 'består av' },
+      { sentence: 'Hon blev en ___ företagsledare.', answer: 'förmögen' },
+      { sentence: 'Man ska inte ___ pengar med lycka.', answer: 'likställa' },
+      { sentence: 'Varje ___ i gruppen fick komma till tals.', answer: 'person' },
+      { sentence: 'De valde att ___ sina pengar på utbildning.', answer: 'spendera' },
+      { sentence: 'Han fortsatte att ___ efter sitt mål.', answer: 'sträva' },
+      { sentence: 'Vi fick ett bra ___ att öva svenska tillsammans.', answer: 'tillfälle' }
+    ];
+    const words = ['bestå av', 'förmögen', 'likställa', 'person', 'spendera', 'sträva', 'tillfälle'];
+    const quiz = document.getElementById('quiz');
+    document.querySelector('.word-bank').innerHTML = words.map(word => `<span>${word}</span>`).join('');
+    questions.forEach((question, index) => {
+      const row = document.createElement('div');
+      row.className = 'question';
+      row.innerHTML = `<span class="sentence">${index + 1}. ${question.sentence}</span><span class="entry"><input type="text" autocomplete="off" aria-label="Svar ${index + 1}"><span class="feedback" aria-live="polite"></span></span>`;
+      const listenButton = document.createElement('button');
+      listenButton.type = 'button';
+      listenButton.className = 'listen-button';
+      listenButton.textContent = 'Lyssna';
+      listenButton.setAttribute('aria-label', `Lyssna på mening ${index + 1}`);
+      listenButton.setAttribute('aria-pressed', 'false');
+      listenButton.dataset.sentence = `${index + 1}. ${question.sentence.replace('___', '...')}`;
+      listenButton.addEventListener('click', () => speakSentence(listenButton));
+      row.querySelector('.entry').before(listenButton);
+      row.querySelector('input').addEventListener('input', updateResults);
+      quiz.appendChild(row);
+    });
+    function normalize(value) { return value.trim().toLocaleLowerCase('sv-SE').replace(/[.!?]+$/, '').replace(/\s+/g, ' '); }
+    function resetListenButtons() {
+      document.querySelectorAll('.listen-button').forEach(button => { button.textContent = 'Lyssna'; button.setAttribute('aria-pressed', 'false'); });
+    }
+    function speakSentence(button) {
+      if (!('speechSynthesis' in window)) { button.textContent = 'Talsyntes saknas'; return; }
+      if (button.getAttribute('aria-pressed') === 'true') {
+        window.speechSynthesis.cancel();
+        resetListenButtons();
+        return;
+      }
+      window.speechSynthesis.cancel();
+      resetListenButtons();
+      const utterance = new SpeechSynthesisUtterance(button.dataset.sentence);
+      utterance.lang = 'sv-SE';
+      utterance.rate = 0.9;
+      button.textContent = 'Stoppa';
+      button.setAttribute('aria-pressed', 'true');
+      utterance.onend = resetListenButtons;
+      utterance.onerror = resetListenButtons;
+      window.speechSynthesis.speak(utterance);
+    }
+    function updateResults() {
+      let answered = 0;
+      let correct = 0;
+      quiz.querySelectorAll('input').forEach((input, index) => {
+        const answer = normalize(input.value);
+        input.classList.remove('correct', 'incorrect');
+        const feedback = input.nextElementSibling;
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+        if (!answer) return;
+        answered++;
+        const isCorrect = answer === questions[index].answer;
+        input.classList.add(isCorrect ? 'correct' : 'incorrect');
+        feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+        feedback.textContent = isCorrect ? 'Rätt!' : 'Inte riktigt än.';
+        if (isCorrect) correct++;
+      });
+      document.getElementById('summary').textContent = answered ? `Rätt: ${correct} av ${answered} besvarade.` : '';
+    }
+    document.getElementById('reset').addEventListener('click', () => {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      resetListenButtons();
+      quiz.querySelectorAll('input').forEach(input => { input.value = ''; input.classList.remove('correct', 'incorrect'); input.nextElementSibling.textContent = ''; input.nextElementSibling.className = 'feedback'; });
+      updateResults();
+    });
+  </script>
+</body>
+</html>
