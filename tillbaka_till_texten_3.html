@@ -60,9 +60,14 @@
       { sentence: 'Varje ___ i gruppen fick komma till tals.', translation: 'Every person in the group got a chance to speak.', answer: 'person' },
       { sentence: 'De valde att ___ sina pengar på utbildning.', translation: 'They chose to spend their money on education.', answer: 'spendera' },
       { sentence: 'Han fortsatte att ___ efter sitt mål.', translation: 'He continued striving toward his goal.', answer: 'sträva' },
-      { sentence: 'Vi fick ett bra ___ att öva svenska tillsammans.', translation: 'We got a good opportunity to practice Swedish together.', answer: 'tillfälle' }
+      { sentence: 'Vi fick ett bra ___ att öva svenska tillsammans.', translation: 'We got a good opportunity to practice Swedish together.', answer: 'tillfälle' },
+      { sentence: 'Hon fattade ett viktigt ___ om företagets framtid.', translation: 'She made an important decision about the future of the company.', answer: 'beslut' },
+      { sentence: 'Efter många år hade hon stor ___ av ledarskap.', translation: 'After many years, she had a lot of experience in leadership.', answer: 'erfarenhet' },
+      { sentence: 'Hennes idé blev ___ i hela landet.', translation: 'Her idea became well known throughout the country.', answer: 'känd' },
+      { sentence: 'Flera personer ville ___ hennes arbete.', translation: 'Several people wanted to support her work.', answer: 'stödja' },
+      { sentence: 'Det fanns en ___ att börja om.', translation: 'There was an opportunity to start over.', answer: 'möjlighet' }
     ];
-    const words = ['bestå av', 'förmögen', 'likställa', 'person', 'spendera', 'sträva', 'tillfälle'];
+    const words = ['bestå av', 'beslut', 'erfarenhet', 'förmögen', 'känd', 'likställa', 'möjlighet', 'person', 'spendera', 'stödja', 'sträva', 'tillfälle'];
     const quiz = document.getElementById('quiz');
     document.querySelector('.word-bank').innerHTML = words.map(word => `<span>${word}</span>`).join('');
     questions.forEach((question, index) => {

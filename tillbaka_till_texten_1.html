@@ -63,9 +63,14 @@
       { sentence: 'Hon deltog i en ___ för att visa vad bilen kunde göra.', translation: 'She took part in a competition to show what the car could do.', answer: 'tävling' },
       { sentence: 'Bertha kunde ___ resan i detalj.', translation: 'Bertha could describe the journey in detail.', answer: 'beskriva' },
       { sentence: 'Sådana resor kunde ___ under flera dagar.', translation: 'Such journeys could take several days.', answer: 'ske' },
-      { sentence: 'Hon ville ___ målet att visa bilens möjligheter.', translation: 'She wanted to achieve her goal of showing what the car could do.', answer: 'uppnå' }
+      { sentence: 'Hon ville ___ målet att visa bilens möjligheter.', translation: 'She wanted to achieve her goal of showing what the car could do.', answer: 'uppnå' },
+      { sentence: 'Bilen behövde ___ för att fortsätta färden.', translation: 'The car needed fuel to continue the journey.', answer: 'bränsle' },
+      { sentence: 'Bertha utförde en ___ längs vägen.', translation: 'Bertha carried out a repair along the way.', answer: 'reparation' },
+      { sentence: 'Många hade aldrig sett ett sådant ___ förut.', translation: 'Many people had never seen such a vehicle before.', answer: 'fordon' },
+      { sentence: 'Människorna längs vägen blev ___ när de såg bilen.', translation: 'People along the road became curious when they saw the car.', answer: 'nyfikna' },
+      { sentence: 'Resan blev en stor ___ för familjen.', translation: 'The journey was a great success for the family.', answer: 'framgång' }
     ];
-    const words = ['avstånd', 'beskriva', 'bli verklighet', 'fungera', 'ske', 'spår', 'syfte', 'tävling', 'övertygad', 'uppnå'];
+    const words = ['avstånd', 'beskriva', 'bli verklighet', 'bränsle', 'fordon', 'framgång', 'fungera', 'nyfikna', 'reparation', 'ske', 'spår', 'syfte', 'tävling', 'övertygad', 'uppnå'];
     const quiz = document.getElementById('quiz');
     document.querySelector('.word-bank').innerHTML = words.map(word => `<span>${word}</span>`).join('');
     questions.forEach((question, index) => {
