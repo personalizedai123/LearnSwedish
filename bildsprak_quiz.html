@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz: Bildspråk</title>
+  <style>
+    :root {
+      --bg: #f7f4ec;
+      --paper: #fffdf7;
+      --ink: #17221d;
+      --muted: #65736b;
+      --line: #d9ded4;
+      --green: #176b54;
+      --green-dark: #0e4d3c;
+      --mint: #dceee4;
+      --red: #b64332;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at 8% 8%, #f3c96955, transparent 24rem),
+                  radial-gradient(circle at 92% 82%, #dceee4cc, transparent 28rem),
+                  var(--bg);
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+    main { width: min(900px, calc(100% - 28px)); margin: 0 auto; padding: 42px 0 60px; }
+    .eyebrow { color: var(--green); font: 700 12px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { max-width: 700px; margin: 10px 0 12px; font-size: clamp(2.6rem, 8vw, 5rem); line-height: .95; font-weight: 500; letter-spacing: -.04em; }
+    .intro { max-width: 720px; margin: 0 0 24px; color: var(--muted); font-size: 1.08rem; line-height: 1.55; }
+    .progress-wrap { display: flex; justify-content: space-between; gap: 16px; margin: 0 0 8px; color: var(--muted); font: 700 12px Arial, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+    progress { width: 100%; height: 9px; margin-bottom: 22px; accent-color: var(--green); }
+    .quiz-box { padding: 10px 22px 24px; border: 1px solid var(--line); background: #fffdf7e8; box-shadow: 0 18px 45px #22362b1c; }
+    .question { padding: 19px 0; border-bottom: 1px solid var(--line); }
+    .question:last-child { border-bottom: 0; }
+    .kind { display: block; margin-bottom: 6px; color: var(--green); font: 700 11px Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+    .question-text { display: block; margin-bottom: 12px; font-size: 1.08rem; line-height: 1.5; }
+    .vietnamese-expression { font-family: 'Segoe UI', Arial, sans-serif; font-style: normal; }
+    .options { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; }
+    .option { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; transition: background .2s ease, border-color .2s ease; }
+    .option:hover, .option:has(input:focus-visible) { border-color: var(--green); background: #f5faf7; }
+    .option input { flex: 0 0 auto; margin-top: 3px; accent-color: var(--green); }
+    .feedback { min-height: 22px; margin: 9px 0 0; font: 700 .82rem Arial, sans-serif; line-height: 1.45; }
+    .feedback.correct { color: var(--green-dark); }
+    .feedback.incorrect { color: var(--red); }
+    .listen-answer { display: block; margin-top: 8px; padding: 8px 11px; border: 1px solid var(--green); background: transparent; color: var(--green-dark); font-size: 12px; letter-spacing: 0; text-transform: none; }
+    .listen-answer:hover, .listen-answer:focus-visible { background: var(--mint); }
+    .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 24px; }
+    button { padding: 13px 20px; border: 0; border-radius: 8px; background: var(--green); color: white; cursor: pointer; font: 700 13px Arial, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+    button:hover { background: var(--green-dark); }
+    button.secondary { background: #6b7a73; }
+    .summary { min-height: 26px; margin: 16px 0 0; color: var(--green-dark); font: 700 14px Arial, sans-serif; }
+    .nav-link { display: inline-block; margin-top: 18px; color: var(--green); text-decoration: none; font: 700 14px Arial, sans-serif; }
+    .nav-link:hover { text-decoration: underline; }
+    @media (max-width: 560px) { main { padding-top: 28px; } .quiz-box { padding-inline: 16px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Svenska · bildspråk</div>
+    <h1>Bildspråk</h1>
+    <p class="intro">Öva på de 16 uttrycken från boken. Några ledtrådar visar uttryckens engelska eller vietnamesiska motsvarighet; övriga frågor och instruktioner är på svenska. Välj ett svar i taget, få direkt återkoppling och lyssna på det rätta svaret. Uppläsningen använder en svensk röst från din enhet om en sådan finns. Översättningarna visar betydelsen, inte alltid en ordagrann motsvarighet.</p>
+
+    <div class="progress-wrap"><span id="progressText">0 av 50 besvarade</span><span id="scoreText">Poäng: 0</span></div>
+    <progress id="progress" value="0" max="50" aria-label="Hur många frågor som är besvarade"></progress>
+    <section class="quiz-box" id="quiz" aria-label="Quizfrågor"></section>
+
+    <div class="controls">
+      <button type="button" id="resetBtn" class="secondary">Börja om</button>
+    </div>
+    <p class="summary" id="summary" aria-live="polite"></p>
+    <a class="nav-link" href="index.html">Tillbaka till startsidan</a>
+  </main>
+
+  <script>
+    const expressions = [
+      { phrase: 'Envis som en åsna', word: 'åsna', english: 'stubborn as a mule', vietnamese: 'bướng bỉnh như lừa' },
+      { phrase: 'Flitig som en myra', word: 'myra', english: 'as hardworking as an ant', vietnamese: 'chăm chỉ như kiến' },
+      { phrase: 'Hungrig som en varg', word: 'varg', english: 'as hungry as a wolf', vietnamese: 'đói như sói' },
+      { phrase: 'Klok som en uggla', word: 'uggla', english: 'as wise as an owl', vietnamese: 'khôn ngoan như cú' },
+      { phrase: 'Listig som en räv', word: 'räv', english: 'as cunning as a fox', vietnamese: 'ranh mãnh như cáo' },
+      { phrase: 'Långsam som en snigel', word: 'snigel', english: 'as slow as a snail', vietnamese: 'chậm như sên' },
+      { phrase: 'Lätt som en plätt', word: 'plätt', english: 'as easy as pie', vietnamese: 'dễ như ăn bánh' },
+      { phrase: 'Oskyldig som ett lamm', word: 'lamm', english: 'as innocent as a lamb', vietnamese: 'vô tội như cừu non' },
+      { phrase: 'Rik som ett troll', word: 'troll', english: 'extremely rich', vietnamese: 'rất giàu' },
+      { phrase: 'Svart som natten', word: 'natten', english: 'as black as night', vietnamese: 'đen như đêm' },
+      { phrase: 'Vit som snö', word: 'snö', english: 'as white as snow', vietnamese: 'trắng như tuyết' },
+      { phrase: 'Tyst som en mus', word: 'mus', english: 'as quiet as a mouse', vietnamese: 'im lặng như chuột' },
+      { phrase: 'Trofast som en hund', word: 'hund', english: 'as faithful as a dog', vietnamese: 'trung thành như chó' },
+      { phrase: 'Snabb som blixten', word: 'blixten', english: 'as fast as lightning', vietnamese: 'nhanh như chớp' },
+      { phrase: 'Stark som en björn', word: 'björn', english: 'as strong as a bear', vietnamese: 'khỏe như gấu' },
+      { phrase: 'Fin som snus', word: 'snus', english: 'really good; excellent', vietnamese: 'rất tuyệt; rất tốt' }
+    ];
+
+    function makeQuestion(kind, prompt, answer, choices, explanation, spokenAnswer = answer) {
+      return { kind, prompt, answer, choices, explanation, spokenAnswer };
+    }
+
+    function distractorsFor(item, index, property) {
+      return [item, expressions[(index + 3) % expressions.length], expressions[(index + 7) % expressions.length], expressions[(index + 11) % expressions.length]]
+        .map(expression => expression[property]);
+    }
+
+    const questions = expressions.flatMap((item, index) => [
+      makeQuestion('Svenska · fyll i', `${item.phrase.split(' ').slice(0, -1).join(' ')} ___`, item.word, distractorsFor(item, index, 'word'), `Hela uttrycket är ”${item.phrase}”.`, item.phrase),
+      makeQuestion('Engelsk ledtråd', `Vilket svenskt uttryck motsvarar “${item.english}”?`, item.phrase, distractorsFor(item, index, 'phrase'), `På svenska: ”${item.phrase}”.`),
+      makeQuestion('Vietnamesisk ledtråd', `Vilket svenskt uttryck motsvarar <span class="vietnamese-expression" lang="vi">“${item.vietnamese}”</span>?`, item.phrase, distractorsFor(item, index, 'phrase'), `På svenska: ”${item.phrase}”.`)
+    ]);
+
+    questions.push(
+      makeQuestion('Svenska · ordkunskap', 'Vad betyder adjektivet ”flitig”?', 'arbetsam', ['lat', 'arbetsam', 'hungrig', 'långsam'], '”Flitig” betyder arbetsam och idog.'),
+      makeQuestion('Svenska · ordkunskap', 'Vad är en snigel?', 'Ett litet djur med mjuk kropp och skal', ['En fågel', 'Ett litet djur med mjuk kropp och skal', 'En insekt', 'Ett rovdjur'], 'En snigel är ett litet blötdjur med mjuk kropp och ofta ett skal.')
+    );
+
+    for (let index = questions.length - 1; index > 0; index--) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [questions[index], questions[swapIndex]] = [questions[swapIndex], questions[index]];
+    }
+
+    const quiz = document.getElementById('quiz');
+    const progress = document.getElementById('progress');
+    const progressText = document.getElementById('progressText');
+    const scoreText = document.getElementById('scoreText');
+    const summary = document.getElementById('summary');
+
+    function resetListenButtons() {
+      document.querySelectorAll('.listen-answer').forEach(button => {
+        button.textContent = 'Lyssna på rätt svar';
+        button.setAttribute('aria-pressed', 'false');
+      });
+    }
+
+    function speakAnswer(text, button) {
+      if (!('speechSynthesis' in window)) return;
+      if (button.getAttribute('aria-pressed') === 'true') {
+        window.speechSynthesis.cancel();
+        resetListenButtons();
+        return;
+      }
+      window.speechSynthesis.cancel();
+      resetListenButtons();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'sv-SE';
+      const voices = window.speechSynthesis.getVoices();
+      utterance.voice = voices.find(voice => voice.lang.toLowerCase() === 'sv-se') ||
+        voices.find(voice => voice.lang.toLowerCase().startsWith('sv')) || null;
+      utterance.rate = 1;
+      button.textContent = 'Stoppa';
+      button.setAttribute('aria-pressed', 'true');
+      utterance.onend = resetListenButtons;
+      utterance.onerror = resetListenButtons;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function render() {
+      quiz.innerHTML = questions.map((question, index) => {
+        const choices = [...question.choices];
+        for (let choiceIndex = choices.length - 1; choiceIndex > 0; choiceIndex--) {
+          const swapIndex = Math.floor(Math.random() * (choiceIndex + 1));
+          [choices[choiceIndex], choices[swapIndex]] = [choices[swapIndex], choices[choiceIndex]];
+        }
+        return `<div class="question" data-index="${index}">
+          <span class="kind">Fråga ${index + 1} · ${question.kind}</span>
+          <span class="question-text">${question.prompt}</span>
+          <ul class="options">${choices.map(choice => `<li><label class="option"><input type="radio" name="question-${index}" value="${choice === question.answer ? 'correct' : 'incorrect'}"> <span>${choice}</span></label></li>`).join('')}</ul>
+          <p class="feedback" id="feedback-${index}" aria-live="polite"></p>
+        </div>`;
+      }).join('');
+    }
+
+    function updateStatus() {
+      const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+      const score = document.querySelectorAll('input[type="radio"]:checked[value="correct"]').length;
+      progress.value = answered;
+      progressText.textContent = `${answered} av ${questions.length} besvarade`;
+      scoreText.textContent = `Poäng: ${score}`;
+      summary.textContent = answered === questions.length ? `Klart! Du fick ${score} av ${questions.length} poäng.` : '';
+    }
+
+    quiz.addEventListener('change', event => {
+      if (!event.target.matches('input[type="radio"]')) return;
+      const questionIndex = Number(event.target.closest('.question').dataset.index);
+      const question = questions[questionIndex];
+      const feedback = document.getElementById(`feedback-${questionIndex}`);
+      const correct = event.target.value === 'correct';
+      feedback.className = `feedback ${correct ? 'correct' : 'incorrect'}`;
+      feedback.replaceChildren();
+      const message = document.createElement('span');
+      message.textContent = correct ? `Rätt! ${question.explanation}` : `Inte riktigt. Rätt svar: ${question.answer}. ${question.explanation}`;
+      const listenButton = document.createElement('button');
+      listenButton.type = 'button';
+      listenButton.className = 'listen-answer';
+      listenButton.textContent = 'Lyssna på rätt svar';
+      listenButton.setAttribute('aria-label', `Lyssna på rätt svar: ${question.spokenAnswer}`);
+      listenButton.setAttribute('aria-pressed', 'false');
+      feedback.append(message, listenButton);
+      updateStatus();
+    });
+
+    quiz.addEventListener('click', event => {
+      const button = event.target.closest('.listen-answer');
+      if (!button) return;
+      const questionIndex = Number(button.closest('.question').dataset.index);
+      speakAnswer(questions[questionIndex].spokenAnswer, button);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      resetListenButtons();
+      document.querySelectorAll('input[type="radio"]').forEach(input => { input.checked = false; });
+      document.querySelectorAll('.feedback').forEach(feedback => { feedback.textContent = ''; feedback.className = 'feedback'; });
+      updateStatus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    render();
+  </script>
+</body>
+</html>
