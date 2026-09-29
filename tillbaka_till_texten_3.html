@@ -74,7 +74,7 @@
       listenButton.textContent = 'Lyssna';
       listenButton.setAttribute('aria-label', `Lyssna på mening ${index + 1}`);
       listenButton.setAttribute('aria-pressed', 'false');
-      listenButton.dataset.sentence = `${index + 1}. ${question.sentence.replace('___', '...')}`;
+      listenButton.dataset.sentence = `${index + 1}. ${question.sentence.replace('___', question.answer)}`;
       listenButton.addEventListener('click', () => speakSentence(listenButton));
       row.querySelector('.entry').before(listenButton);
       row.querySelector('input').addEventListener('input', updateResults);
