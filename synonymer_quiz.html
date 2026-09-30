@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz: Synonymer</title>
+  <style>
+    :root {
+      --bg: #f7f4ec;
+      --paper: #fffdf7;
+      --ink: #17221d;
+      --muted: #65736b;
+      --line: #d9ded4;
+      --green: #176b54;
+      --green-dark: #0e4d3c;
+      --mint: #dceee4;
+      --yellow: #f3c969;
+      --red: #b64332;
+      --shadow: rgba(23, 34, 29, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: radial-gradient(circle at 8% 8%, #f3c96940, transparent 24rem),
+                  radial-gradient(circle at 92% 82%, #dceee4b3, transparent 28rem),
+                  var(--bg);
+      font-family: Georgia, 'Times New Roman', serif;
+    }
+
+    main {
+      width: min(900px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 42px 0 60px;
+    }
+
+    .eyebrow {
+      color: var(--green);
+      font: 700 12px Arial, sans-serif;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0 12px;
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      line-height: .98;
+      font-weight: 500;
+    }
+
+    .intro {
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.55;
+      margin-bottom: 24px;
+    }
+
+    .quiz-box {
+      padding: 8px 22px 22px;
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 247, .9);
+      box-shadow: 0 18px 45px var(--shadow);
+    }
+
+    .question {
+      padding: 18px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .question:last-child { border-bottom: 0; }
+
+    .label {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 1.08rem;
+      line-height: 1.5;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      transition: background .2s ease, border-color .2s ease;
+    }
+
+    .option:hover {
+      border-color: var(--green);
+      background: #f5faf7;
+    }
+
+    .option input { accent-color: var(--green); }
+
+    .status {
+      min-height: 24px;
+      margin-top: 10px;
+      font: 700 .82rem Arial, sans-serif;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .status.correct { color: var(--green-dark); }
+    .status.incorrect { color: var(--red); }
+
+    .translation {
+      display: none;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: .98rem;
+      line-height: 1.5;
+    }
+
+    .translation.visible { display: block; }
+
+    .listen-button {
+      margin-top: 12px;
+      padding: 9px 13px;
+      background: var(--mint);
+      color: var(--green-dark);
+      font-size: 12px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 25px;
+    }
+
+    button {
+      padding: 13px 20px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--green);
+      color: white;
+      font: 700 13px Arial, sans-serif;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    button.secondary { background: #6b7a73; }
+    button:hover { filter: brightness(.97); }
+
+    .result-summary {
+      min-height: 24px;
+      margin-top: 4px;
+      color: var(--green-dark);
+      font: 700 14px Arial, sans-serif;
+    }
+
+    .nav-link {
+      display: inline-block;
+      margin-top: 18px;
+      color: var(--green);
+      text-decoration: none;
+      font: 700 14px Arial, sans-serif;
+    }
+
+    .nav-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Svenska · ordförråd</div>
+    <h1>Quiz: Synonymer</h1>
+    <p class="intro">Välj synonymen och läs sedan den svenska exempelmeningen med engelsk översättning.</p>
+
+    <div class="quiz-box" id="quiz"></div>
+
+    <div class="controls">
+      <button type="button" id="checkBtn">Rätta obesvarade</button>
+      <button type="button" class="secondary" id="resetBtn">Börja om</button>
+    </div>
+    <p class="result-summary" id="summary" aria-live="polite"></p>
+    <a class="nav-link" href="index.html">Tillbaka till startsidan</a>
+  </main>
+
+  <script>
+    const questions = [
+      { word: 'ske', answer: 'inträffa', sentences: [['Vad ska ske i morgon?', 'What will happen tomorrow?'], ['En olycka kan ske plötsligt.', 'An accident can happen suddenly.']] },
+      { word: 'knappt', answer: 'nästan inte', sentences: [['Jag hann knappt äta frukost.', 'I barely had time to eat breakfast.'], ['Det finns knappt någon tid kvar.', 'There is hardly any time left.']] },
+      { word: 'fara', answer: 'resa (verb)', sentences: [['Vi ska fara till Stockholm.', 'We are going to travel to Stockholm.'], ['De for hem tidigt på kvällen.', 'They travelled home early in the evening.']] },
+      { word: 'färd', answer: 'resa (substantiv)', sentences: [['Färden tog tre timmar.', 'The journey took three hours.'], ['Vi hade en lång färd framför oss.', 'We had a long journey ahead of us.']] },
+      { word: 'syfte', answer: 'mening', sentences: [['Vad är syftet med övningen?', 'What is the purpose of the exercise?'], ['Bokens syfte är att lära ut nya ord.', 'The purpose of the book is to teach new words.']] },
+      { word: 'krångla', answer: 'trassla', sentences: [['Min dator brukar krångla.', 'My computer often causes trouble.'], ['Cykeln började krångla på vägen hem.', 'The bicycle started acting up on the way home.']] },
+      { word: 'orsak', answer: 'anledning', sentences: [['Vet du orsaken till problemet?', 'Do you know the reason for the problem?'], ['Det finns en tydlig orsak till förseningen.', 'There is a clear reason for the delay.']] },
+      { word: 'förmodligen', answer: 'troligen', sentences: [['Hon kommer förmodligen senare.', 'She will probably come later.'], ['Det blir förmodligen regn i kväll.', 'It will probably rain tonight.']] },
+      { word: 'söka', answer: 'leta', sentences: [['Jag måste söka efter mina nycklar.', 'I have to look for my keys.'], ['Han söker ett nytt jobb.', 'He is looking for a new job.']] },
+      { word: 'nå', answer: 'komma fram till', sentences: [['När ska vi nå målet?', 'When will we reach the destination?'], ['Tåget nådde stationen klockan åtta.', 'The train reached the station at eight o’clock.']] }
+    ];
+
+    const answers = [
+      'troligen', 'anledning', 'leta', 'nästan inte', 'inträffa',
+      'resa (verb)', 'mening', 'komma fram till', 'trassla', 'resa (substantiv)'
+    ];
+
+    const quiz = document.querySelector('#quiz');
+    const summary = document.querySelector('#summary');
+
+    function shuffled(items) {
+      return [...items].sort(() => Math.random() - 0.5);
+    }
+
+    function renderQuiz() {
+      quiz.innerHTML = questions.map((question, index) => `
+        <section class="question">
+          <label class="label" for="question-${index}"><strong>${index + 1}.</strong> Vad betyder <strong>${question.word}</strong> ungefär?</label>
+          <ul class="options">
+            ${shuffled(answers).map(answer => `
+              <li>
+                <label class="option">
+                  <input type="radio" name="question-${index}" value="${answer}">
+                  <span>${answer}</span>
+                </label>
+              </li>
+            `).join('')}
+          </ul>
+          <button type="button" class="listen-button" data-question="${index}">Lyssna på svenska</button>
+          <div class="status" id="status-${index}" aria-live="polite"></div>
+          <div class="translation" id="translation-${index}"></div>
+        </section>
+      `).join('');
+      summary.textContent = '';
+
+      quiz.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.addEventListener('change', () => checkQuestion(Number(input.name.split('-')[1])));
+      });
+      quiz.querySelectorAll('.listen-button').forEach(button => {
+        button.addEventListener('click', () => speakQuestion(Number(button.dataset.question)));
+      });
+    }
+
+    function speakQuestion(index) {
+      if (!('speechSynthesis' in window)) {
+        summary.textContent = 'Din webbläsare stöder inte uppläsning.';
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const text = questions[index].sentences.map(sentence => sentence[0]).join(' ');
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'sv-SE';
+      utterance.rate = 0.85;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function checkQuestion(index) {
+      const question = questions[index];
+      const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+      const status = document.querySelector(`#status-${index}`);
+      const translation = document.querySelector(`#translation-${index}`);
+      status.className = 'status';
+      translation.className = 'translation visible';
+      translation.innerHTML = question.sentences.map(sentence => `<p><strong>Svenska:</strong> ${sentence[0]}<br><strong>English:</strong> ${sentence[1]}</p>`).join('');
+
+      if (selected.value === question.answer) {
+        status.textContent = 'Rätt!';
+        status.classList.add('correct');
+      } else {
+        status.textContent = `Inte riktigt. Rätt svar: ${question.answer}`;
+        status.classList.add('incorrect');
+      }
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const answered = questions.filter((_, index) => document.querySelector(`input[name="question-${index}"]:checked`));
+      const score = answered.filter((_, index) => {
+        const questionIndex = questions.indexOf(answered[index]);
+        return document.querySelector(`input[name="question-${questionIndex}"]:checked`)?.value === questions[questionIndex].answer;
+      }).length;
+      summary.textContent = `Resultat: ${score} av ${answered.length} besvarade (${questions.length} frågor).`;
+    }
+
+    function checkQuiz() {
+      questions.forEach((question, index) => {
+        const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+        if (selected) {
+          checkQuestion(index);
+        } else {
+          const status = document.querySelector(`#status-${index}`);
+          status.className = 'status incorrect';
+          status.textContent = 'Välj ett svar.';
+        }
+      });
+      updateSummary();
+    }
+
+    document.querySelector('#checkBtn').addEventListener('click', checkQuiz);
+    document.querySelector('#resetBtn').addEventListener('click', () => {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      renderQuiz();
+    });
+    renderQuiz();
+  </script>
+</body>
+</html>
